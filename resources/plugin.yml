@@ -1,0 +1,6 @@
+name: MinigamesAPI
+main: tests.Main
+version: 1.0
+author: aronck
+commands:
+  locations:
