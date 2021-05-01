@@ -23,9 +23,9 @@ public class StandartCountDown extends CountDown {
         int minutes = duration/60;
         int seconds = duration%60;
         countdownStringBuffer.append("§aDas Spiel startet in ");
-        if(minutes!=0)countdownStringBuffer.append("§c" + minutes + " §aMinuten ");
+        if(minutes!=0) countdownStringBuffer.append("§c").append(minutes).append(" §aMinuten ");
         if(minutes!=0 && seconds!=0)countdownStringBuffer.append("§aund ");
-        if(seconds!=0)countdownStringBuffer.append("§c" + seconds + " §aSekunde(n)");
+        if(seconds!=0) countdownStringBuffer.append("§c").append(seconds).append(" §aSekunde(n)");
         String countdownString = countdownStringBuffer.toString();
         countdownStringBuffer.delete(0, countdownStringBuffer.length());
         return countdownString;
