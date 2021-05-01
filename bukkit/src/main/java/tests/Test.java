@@ -2,8 +2,6 @@ package tests;
 
 import org.bukkit.event.EventHandler;
 
-import javax.annotation.Nonnull;
-
 public class Test {
 
     public Test(String s){
@@ -21,7 +19,6 @@ public class Test {
         System.out.println(variable);
     }
 
-    @Nonnull
     public String toString() {
         return "Test{" +
                 "variable=" + variable +
