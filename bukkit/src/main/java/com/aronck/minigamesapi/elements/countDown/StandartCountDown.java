@@ -10,9 +10,17 @@ public class StandartCountDown extends CountDown {
 
     private String prefix = "";
 
+    private boolean useXPBar = true;
+
     public StandartCountDown(int duration, String prefix) {
         super(20, duration);
         this.prefix = prefix;
+    }
+
+    public StandartCountDown(int duration, String prefix, boolean useXPBar) {
+        super(20, duration);
+        this.prefix = prefix;
+        this.useXPBar = useXPBar;
     }
 
     public StandartCountDown(int duration) {
@@ -32,25 +40,29 @@ public class StandartCountDown extends CountDown {
     }
 
     @Override
-    public void tick(int seconds) {
-
+    protected void tick(int seconds) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage(getTickString(seconds));
-            player.setLevel(seconds);
+            if(useXPBar)player.setLevel(seconds);
         }
     }
 
     @Override
-    public void firstTick() {
+    protected void firstTick(int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDer Countdown wurde gestartet!");
+            player.setLevel(duration);
+            player.setExp(0);
         }
     }
 
     @Override
-    public void lastTick() {
+    protected void lastTick(int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDas Spiel startet jetzt!");
+            player.setLevel(0);
+            player.setExp(0);
         }
     }
+
 }

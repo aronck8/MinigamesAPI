@@ -10,7 +10,9 @@ public abstract class CountDown {
     protected long timerStep;
     protected int taskId;
 
-    protected final int duration;
+    protected int duration = 0;
+    private static final int STANDARD_DURATION = 30;
+    protected int currentContdownTime = 0;
 
     public CountDown(long timerStep, int duration) {
         this.timerStep = timerStep;
@@ -19,39 +21,49 @@ public abstract class CountDown {
 
     final void start0(Minigame minigame){
         this.minigame = minigame;
-        firstTick();
+        firstTick(duration);
         start();
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(minigame.main, () -> {
-            lastTick();
-            MinigameStartEvent minigameStartEvent = new MinigameStartEvent(minigame);
-            Bukkit.getPluginManager().callEvent(minigameStartEvent);
-            if(!minigameStartEvent.isCancelled())minigame.startMiniGame();
-        },timerStep * duration + 1);
-
     }
 
-    public void firstTick(){}
+    final void start0(Minigame minigame, int time){
+        this.minigame = minigame;
+        firstTick(time);
+        start(time);
+    }
 
     public void start(){
+        start(duration == 0 ? STANDARD_DURATION : duration);
+    }
+
+    public void start(int time){
+        currentContdownTime = time;
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(minigame.main, new Runnable() {
-            int current = duration;
+            int current = time;
             @Override
             public void run() {
-                tick(current);
 
-                if(current>1)current--;
+                if(current>=1)tick(current);
+                else if(current==0) lastTick(currentContdownTime);
                 else stop();
+                current--;
             }
         }, 0, timerStep);
     }
 
-    public abstract void tick(int numberOfStep);
+    protected void firstTick(int duration){}
 
-    public void lastTick(){}
+    protected abstract void tick(int numberOfStep);
+
+    protected void lastTick(int duration){}
+
+    protected void performPostStopActions(int duration){}
 
     public void stop(){
         if(taskId!=0) Bukkit.getScheduler().cancelTask(taskId);
+        MinigameStartEvent minigameStartEvent = new MinigameStartEvent(minigame);
+        Bukkit.getPluginManager().callEvent(minigameStartEvent);
+        if(!minigameStartEvent.isCancelled())minigame.startMiniGame();
+        performPostStopActions(currentContdownTime);
     }
 
 }
