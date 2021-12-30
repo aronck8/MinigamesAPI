@@ -61,11 +61,11 @@ public class BuilderStageTwo extends MinigameBuilderStage {
 
             for (Team team : minigame.teamsConfiguration.getTeams()) {
 
-                //rename a copy of the item to have the teams name as suffix. Example: bed 1, or bed red;
+                //rename a copy of the item to have the teams name as suffix. Example: bed 1, or bed-red;
                 //and add it to the list of location choosers
-                minigame.locationChoosers.add(new LocationChooser(chooser.getKey() + " " + team.getName(),
+                minigame.locationChoosers.add(new LocationChooser(chooser.getKey() + "-" + team.getName(),
                         chooser.getType(),
-                        PluginUtils.getItem(chooser.getItem(), chooser.getKey() + " " + team.getName())));
+                        PluginUtils.getItem(chooser.getItem(), chooser.getKey() + "-" + team.getName())));
             }
 
         } else {
@@ -78,9 +78,9 @@ public class BuilderStageTwo extends MinigameBuilderStage {
 
                 //rename a copy of the item to have the teams name as suffix. Example: bed 1, or bed red;
                 //and add it to the list of location choosers
-                minigame.locationChoosers.add(new LocationChooser(chooser.getKey() + " " + team.getName(),
+                minigame.locationChoosers.add(new LocationChooser(chooser.getKey() + "-" + team.getName(),
                         chooser.getType(),
-                        PluginUtils.getItem(chooser.getItem(), chooser.getKey() + " " + team.getName())));
+                        PluginUtils.getItem(chooser.getItem(), chooser.getKey() + "-" + team.getName())));
             }
         }
         return this;

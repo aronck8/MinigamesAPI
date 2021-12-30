@@ -26,7 +26,7 @@ public final class InventoryClick implements Listener {
 			e.setCancelled(true);
 			for(LocationChooser chooser : minigame.getLocationChoosers()){
 				if(!chooser.getItem().equals(e.getCurrentItem()))continue;
-				e.getWhoClicked().sendMessage("Die Position für: " + chooser.getKey() + " wurde gesetzt!");
+				e.getWhoClicked().sendMessage("Die Position für: \"" + chooser.getKey() + "\" wurde gesetzt!");
 				Config.saveLocation(new Location(chooser.getKey(), e.getWhoClicked().getLocation()));
 			}
 		}
