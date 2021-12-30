@@ -5,6 +5,11 @@ import com.aronck.minigamesapi.minigame.MinigameBuilder;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 public class Main extends JavaPlugin {
 
 	private static Main instance;
@@ -70,9 +75,6 @@ public class Main extends JavaPlugin {
 											.addGoal(GoalBuilder.newGoal(GoalType.BreakBlock(Material.bed))
 		 */
 
-		Minigame minigame = new MinigameBuilder(this).setTeams(null)
-				.addEvent(PlayerJoinEvent.class, e -> e.setJoinMessage("asdasdsa"))
-				.build();
 	}
 
 	public static Main getInstance() {
