@@ -3,7 +3,7 @@ package com.aronck.minigamesapi.minigame;
 import com.aronck.minigamesapi.events.custom.MinigameStartEvent;
 import org.bukkit.Bukkit;
 
-public abstract class CountDown {
+public abstract class Countdown {
 
     protected Minigame minigame;
 
@@ -14,21 +14,13 @@ public abstract class CountDown {
     private static final int STANDARD_DURATION = 30;
     protected int currentContdownTime = 0;
 
-    public CountDown(long timerStep, int duration) {
+    public Countdown(long timerStep, int duration) {
         this.timerStep = timerStep;
         this.duration = duration;
     }
 
-    final void start0(Minigame minigame){
+    void setMinigame(Minigame minigame){
         this.minigame = minigame;
-        firstTick(duration);
-        start();
-    }
-
-    final void start0(Minigame minigame, int time){
-        this.minigame = minigame;
-        firstTick(time);
-        start(time);
     }
 
     public void start(){
@@ -36,6 +28,7 @@ public abstract class CountDown {
     }
 
     public void start(int time){
+        firstTick(time);
         currentContdownTime = time;
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(minigame.main, new Runnable() {
             int current = time;

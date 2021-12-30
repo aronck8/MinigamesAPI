@@ -1,10 +1,10 @@
 package com.aronck.minigamesapi.elements.countDown;
 
-import com.aronck.minigamesapi.minigame.CountDown;
+import com.aronck.minigamesapi.minigame.Countdown;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class StandartCountDown extends CountDown {
+public class StandardCountdown extends Countdown {
 
     private StringBuffer countdownStringBuffer = new StringBuffer();
 
@@ -12,18 +12,18 @@ public class StandartCountDown extends CountDown {
 
     private boolean useXPBar = true;
 
-    public StandartCountDown(int duration, String prefix) {
+    public StandardCountdown(int duration, String prefix) {
         super(20, duration);
         this.prefix = prefix;
     }
 
-    public StandartCountDown(int duration, String prefix, boolean useXPBar) {
+    public StandardCountdown(int duration, String prefix, boolean useXPBar) {
         super(20, duration);
         this.prefix = prefix;
         this.useXPBar = useXPBar;
     }
 
-    public StandartCountDown(int duration) {
+    public StandardCountdown(int duration) {
         super(20, duration);
     }
 
