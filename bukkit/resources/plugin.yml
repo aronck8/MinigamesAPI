@@ -4,3 +4,4 @@ version: 1.0
 author: aronck
 commands:
   locations:
+  minigame:

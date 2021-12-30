@@ -1,6 +1,7 @@
 package com.aronck.minigamesapi.minigame;
 
 import com.aronck.minigamesapi.commands.internalCommands.LocationChooserCommand;
+import com.aronck.minigamesapi.commands.internalCommands.MinigameSetupCommand;
 import com.aronck.minigamesapi.elements.countDown.StandartCountDown;
 import com.aronck.minigamesapi.elements.event.EventsManager;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import tests.Main;
 
@@ -27,6 +29,8 @@ import java.util.List;
 public class Minigame {
 
 	private final int ID;
+	private final String NAME;
+	private final int STANDART_COUNTDOWN_TIME = 5;
 
 	JavaPlugin main;
 
@@ -44,12 +48,17 @@ public class Minigame {
 	List<Conditional> startConditions;
 	List<LocationChooser> locationChoosers;
 
-	CountDown countDown;
+	CountDown countDown = new StandartCountDown(30);
 
 	private int taskId;
 
 	Minigame(JavaPlugin main) {
+		this(main, "Minigame");
+	}
+
+	Minigame(JavaPlugin main, String name){
 		ID = Minigames.getNextId();
+		this.NAME = name;
 		//make sure the API itself is enabled before it gets used by another plugin
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("MinigamesAPI");
 		if(plugin==null) try {
@@ -67,8 +76,12 @@ public class Minigame {
 		tabListManager = new TabListManager(this);
 		startConditions = new ArrayList<>();
 		locationChoosers = new ArrayList<>();
+
 		Bukkit.getPluginManager().registerEvents(eventsManager, main);
+
 		Main.getInstance().getCommand("locations").setExecutor(new LocationChooserCommand());
+		Main.getInstance().getCommand("minigame").setExecutor(new MinigameSetupCommand());
+
 		Minigames.addMinigame(this);
 	}
 
@@ -122,9 +135,7 @@ public class Minigame {
 	 * @see #checkConditionsAndStartGame()
 	 */
 	void startPreStartTask() {
-
 		taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, this::checkConditionsAndStartGame, 0, 20);
-
 	}
 
 	/**
@@ -137,9 +148,13 @@ public class Minigame {
 
 		boolean canStart = startConditions.stream().allMatch(Conditional::evaluate);
 		if(canStart){
-			startCountdown(5);
+			startCountdown(STANDART_COUNTDOWN_TIME);
 		}
 
+	}
+
+	public void startCountdown(){
+		countDown.start0(this);
 	}
 
 	/**
@@ -155,10 +170,7 @@ public class Minigame {
 		System.out.println("countdown wurde gestartet!");
 		Bukkit.getScheduler().cancelTask(taskId);
 		initMiniGame();
-
-		if(countDown==null)countDown = new StandartCountDown(time);
-		countDown.start0(this);
-
+		countDown.start0(this, time);
 	}
 
 	void startPostStartTask(){
