@@ -25,6 +25,7 @@ public class LocationChooserCommand implements CommandExecutor {
 
 
         if(args.length==2&&args[0].equalsIgnoreCase("set")){
+
             if(!(sender instanceof Player)){
                 System.out.println("Du musst ein Spieler sein!");
                 return true;

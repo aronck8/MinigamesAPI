@@ -6,6 +6,7 @@ import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import com.aronck.minigamesapi.elements.shop.Shops;
 import com.aronck.minigamesapi.utils.Config;
 import com.aronck.minigamesapi.utils.PluginConstants;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -21,7 +22,7 @@ public final class InventoryClick implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e){
 		if(e.getClickedInventory()==null)return;
-		String title = e.getClickedInventory().getTitle();
+		String title = e.getView().getTitle();
 		if(title.equals(PluginConstants.LOCATION_CHOOSER_INVENTORY_NAME)){
 			e.setCancelled(true);
 			for(LocationChooser chooser : minigame.getLocationChoosers()){

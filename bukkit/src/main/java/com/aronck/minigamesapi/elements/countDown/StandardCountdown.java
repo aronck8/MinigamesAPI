@@ -1,16 +1,20 @@
 package com.aronck.minigamesapi.elements.countDown;
 
+import com.aronck.minigamesapi.events.custom.MinigameStartEvent;
 import com.aronck.minigamesapi.minigame.Countdown;
+import com.aronck.minigamesapi.minigame.Minigame;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class StandardCountdown extends Countdown {
 
-    private StringBuffer countdownStringBuffer = new StringBuffer();
+    protected Minigame minigame;
 
-    private String prefix = "";
+    private final StringBuffer countdownStringBuffer = new StringBuffer();
 
-    private boolean useXPBar = true;
+    protected String prefix = "";
+
+    protected boolean useXPBar = true;
 
     public StandardCountdown(int duration, String prefix) {
         super(20, duration);
@@ -40,7 +44,7 @@ public class StandardCountdown extends Countdown {
     }
 
     @Override
-    protected void tick(int seconds) {
+    protected void tick(Minigame minigame, int seconds) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage(getTickString(seconds));
             if(useXPBar)player.setLevel(seconds);
@@ -48,7 +52,7 @@ public class StandardCountdown extends Countdown {
     }
 
     @Override
-    protected void firstTick(int duration) {
+    protected void firstTick(Minigame minigame, int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDer Countdown wurde gestartet!");
             player.setLevel(duration);
@@ -57,12 +61,15 @@ public class StandardCountdown extends Countdown {
     }
 
     @Override
-    protected void lastTick(int duration) {
+    protected void lastTick(Minigame minigame, int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDas Spiel startet jetzt!");
             player.setLevel(0);
             player.setExp(0);
         }
+
+        minigame.startNextState();
+
     }
 
 }

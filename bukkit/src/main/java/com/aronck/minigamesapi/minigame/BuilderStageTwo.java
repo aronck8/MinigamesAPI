@@ -86,14 +86,20 @@ public class BuilderStageTwo extends MinigameBuilderStage {
         return this;
     }
 
-    public BuilderStageTwo setCountdown(CountDown countdown) {
+    public BuilderStageTwo setCountdown(Countdown countdown) {
         minigame.countDown = countdown;
         return this;
     }
 
+    public BuilderStageTwo addMinigameState(AbstractState state){
+        state.minigame = minigame;
+        minigame.lastState.setNextState(state);
+        minigame.lastState = state;
+        return this;
+    }
+
     public Minigame build() {
-        minigame.registerListeners();
-        minigame.startPreStartTask();
+        minigame.preInitGameStates();
         return minigame;
     }
 

@@ -1,8 +1,6 @@
 package com.aronck.minigamesapi.minigame;
 
-import com.aronck.minigamesapi.commands.internalCommands.LocationChooserCommand;
-import com.aronck.minigamesapi.commands.internalCommands.MinigameSetupCommand;
-import com.aronck.minigamesapi.elements.countDown.StandartCountDown;
+import com.aronck.minigamesapi.elements.countDown.StandardCountdown;
 import com.aronck.minigamesapi.elements.event.EventsManager;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import com.aronck.minigamesapi.elements.map.MapConfiguration;
@@ -12,16 +10,11 @@ import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.Team;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.events.custom.GameOverEvent;
-import com.aronck.minigamesapi.events.internalEvents.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import tests.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +24,12 @@ public class Minigame {
 	private final int ID;
 	private final String NAME;
 	private final int STANDART_COUNTDOWN_TIME = 5;
+	AbstractState firstState;
+	AbstractState currentState;
+	AbstractState nextState;
+	AbstractState lastState;
 
 	JavaPlugin main;
-
 
 	TeamsConfiguration teamsConfiguration;
 	MapConfiguration mapConfiguration;
@@ -48,7 +44,7 @@ public class Minigame {
 	List<Conditional> startConditions;
 	List<LocationChooser> locationChoosers;
 
-	CountDown countDown = new StandartCountDown(30);
+	Countdown countDown = new StandardCountdown(30);
 
 	private int taskId;
 
@@ -57,51 +53,25 @@ public class Minigame {
 	}
 
 	Minigame(JavaPlugin main, String name){
+
 		ID = Minigames.getNextId();
 		this.NAME = name;
-		//make sure the API itself is enabled before it gets used by another plugin
-		Plugin plugin = Bukkit.getPluginManager().getPlugin("MinigamesAPI");
-		if(plugin==null) try {
-			throw new InvalidPluginException("Couldn't load the MinigamesAPI");
-		} catch (InvalidPluginException e) {
-			e.printStackTrace();
-			return;
-		}
-		if(!plugin.isEnabled()){
-			Bukkit.getPluginManager().enablePlugin(plugin);
-		}
 		this.main = main;
+
+		firstState = new InternalInitState(this);
+		nextState = firstState;
+		lastState = nextState;
 		eventsManager = new EventsManager(main);
 		spawnerManager = new SpawnerManager(main);
 		tabListManager = new TabListManager(this);
 		startConditions = new ArrayList<>();
 		locationChoosers = new ArrayList<>();
 
-		Bukkit.getPluginManager().registerEvents(eventsManager, main);
-
-		Main.getInstance().getCommand("locations").setExecutor(new LocationChooserCommand());
-		Main.getInstance().getCommand("minigame").setExecutor(new MinigameSetupCommand());
-
 		Minigames.addMinigame(this);
 	}
 
-	void registerListeners(){
-		Bukkit.getPluginManager().registerEvents(new InteractEvent(this), main);
-		Bukkit.getPluginManager().registerEvents(new InventoryClick(this), main);
-		Bukkit.getPluginManager().registerEvents(new JoinEvent(this), main);
-		Bukkit.getPluginManager().registerEvents(new DeathListener(this), main);
-		Bukkit.getPluginManager().registerEvents(new RespawnEvent(this), main);
-		Bukkit.getPluginManager().registerEvents(new BlockBreakListener(this), main);
-		Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(this), main);
-		eventsManager.registerListeners();
-	}
-
-	/**
-	 *
-	 * inititalizes the minigame before start
-	 */
-	void initMiniGame(){
-
+	public void start(){
+		startNextState();
 	}
 
 	/**
@@ -112,7 +82,6 @@ public class Minigame {
 
 		spawnerManager.startSpawners();
 
-		if (mapConfiguration != null) mapConfiguration.fillChests();
 		System.out.println("starting Minigame");
 		//teleport players to their start position
 		if(teamsConfiguration!=null) {
@@ -126,7 +95,6 @@ public class Minigame {
 		}
 
 		startPostStartTask();
-
 	}
 
 	/**
@@ -144,7 +112,7 @@ public class Minigame {
 	 *
 	 * @see #startCountdown(int) 
 	 */
-	void checkConditionsAndStartGame(){
+	private void checkConditionsAndStartGame(){
 
 		boolean canStart = startConditions.stream().allMatch(Conditional::evaluate);
 		if(canStart){
@@ -154,7 +122,7 @@ public class Minigame {
 	}
 
 	public void startCountdown(){
-		countDown.start0(this);
+		countDown.start(this);
 	}
 
 	/**
@@ -169,8 +137,7 @@ public class Minigame {
 	public void startCountdown(int time) {
 		System.out.println("countdown wurde gestartet!");
 		Bukkit.getScheduler().cancelTask(taskId);
-		initMiniGame();
-		countDown.start0(this, time);
+		countDown.start(this, time);
 	}
 
 	void startPostStartTask(){
@@ -179,9 +146,9 @@ public class Minigame {
 
 	/**
 	 *
-	 * checks the conditions to see if the countdown should start
+	 * checks the conditions to see if the game should stop
 	 *
-	 * @see #startCountdown(int)
+	 * @see #startPostStartTask()
 	 */
 	void checkConditionsAndEndGame(){
 		if(teamsConfiguration!=null) {
@@ -203,9 +170,49 @@ public class Minigame {
 		}
 	}
 
+	public void startNextState(){
+
+		if (nextState == null) {
+			System.out.println("No state");
+			return;
+		} else {
+			System.out.println("currentState: " + nextState.NAME);
+		}
+
+		//if a state is currently running, stop it before starting further states
+		if(currentState!=null && currentState.isRunning()) {
+			currentState.stop();
+		}
+		//if the last state is reached, stop the minigame
+		if(nextState==null){
+			stopMinigame();
+			return;
+		}
+
+		currentState = nextState;
+		nextState = currentState.nextState;
+		currentState.start();
+	}
+
 	public void stopMinigame(){
 		spawnerManager.stopSpawners();
 		if(mapConfiguration!=null)mapConfiguration.resetMap();
+	}
+
+	void preInitGameStates(){
+		AbstractState state = firstState;
+		while(state!=null){
+			state.preInit();
+			state = state.nextState;
+		}
+	}
+
+	public boolean isInActiveState(){
+		return currentState.isActiveState;
+	}
+
+	public AbstractState getCurrentState(){
+		return currentState;
 	}
 
 	public TeamsConfiguration getTeamsConfiguration(){

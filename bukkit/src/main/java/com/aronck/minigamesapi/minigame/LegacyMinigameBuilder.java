@@ -89,13 +89,13 @@ public class LegacyMinigameBuilder {
 		return this;
 	}
 
-	public LegacyMinigameBuilder setCountdown(CountDown countdown) {
+	public LegacyMinigameBuilder setCountdown(Countdown countdown) {
 		minigame.countDown = countdown;
 		return this;
 	}
 
 	public Minigame build() {
-		minigame.registerListeners();
+		minigame.getCurrentState().start();
 		if (minigame.mapConfiguration != null) minigame.mapConfiguration.fillChests();
 		minigame.startPreStartTask();
 		return minigame;
