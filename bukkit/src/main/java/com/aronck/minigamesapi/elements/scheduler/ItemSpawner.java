@@ -62,6 +62,7 @@ public class ItemSpawner extends Spawner{
     public void spawn() {
         for(Location location : locations) {
             if(location==null)continue;
+            if(!canNewItemSpawn(location))return;
             for (int i = 0; i < items.size(); i++) {
                 //check if chances array has defined a value for this item
                 if (spawnChances != null && spawnChances.length > i) {
