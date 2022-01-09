@@ -7,11 +7,7 @@ public class StandartTablistSetting extends TablistSetting{
 
     @Override
     public String renderPlayer(Player player, Team team) {
-        return team.getTeamColor().getColor() + player.getDisplayName();
+        return team.getData().getTeamColor().getColor() + player.getDisplayName();
     }
 
-    @Override
-    public String renderTeamlessPlayer(Player player) {
-        return null;
-    }
 }

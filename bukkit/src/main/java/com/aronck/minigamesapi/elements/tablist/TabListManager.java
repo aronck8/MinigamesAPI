@@ -24,12 +24,10 @@ public class TabListManager {
 
     public void renderTablist(){
         if(tablistSetting==null)return;
-        for(Player player : Bukkit.getOnlinePlayers()){
+        /*for(Player player : Bukkit.getOnlinePlayers()){
             if(minigame.getTeamOfPlayer(player)!=null){
                 tablistSetting.renderPlayer(player, minigame.getTeamOfPlayer(player));
-            }else{
-                tablistSetting.renderTeamlessPlayer(player);
             }
-        }
+        }*/
     }
 }

@@ -23,11 +23,11 @@ public class SmallShop extends CategorizedShop<ItemStack, ItemStack> {
 
         //init blocks category
         ShopCategory<ItemStack, ItemStack> blocks = new ShopCategory<>(this,"§aBlocks", PluginUtils.getItem(Material.SANDSTONE, "§aBlocks"));
-        blocks.addProduct(PluginUtils.getItem(Material.SANDSTONE, 16, "§aSandstein"), PluginConstants.BRONZE);
-        blocks.addProduct(new ItemStack(Material.STONE, 4), PluginConstants.BRONZE);
+        //blocks.addProduct(PluginUtils.getItem(Material.SANDSTONE, 16, "§aSandstein"), PluginConstants.BRONZE);
+        //blocks.addProduct(new ItemStack(Material.STONE, 4), PluginConstants.BRONZE);
 
-        ShopCategory<ItemStack, ItemStack> swords = new ShopCategory<>(this, "§bSchwerter", PluginUtils.getItem(Material.GOLD_SWORD, "§cSchwerter"));
-        swords.addProduct(PluginUtils.getItem(Material.DIAMOND_SWORD, "§cdia ding"), new ItemStack(Material.DIAMOND, 4));
+        //ShopCategory<ItemStack, ItemStack> swords = new ShopCategory<>(this, "§bSchwerter", PluginUtils.getItem(Material.GOLDEN_SWORD, "§cSchwerter"));
+        //swords.addProduct(PluginUtils.getItem(Material.DIAMOND_SWORD, "§cdia ding"), new ItemStack(Material.DIAMOND, 4));
     }
 
     @Override

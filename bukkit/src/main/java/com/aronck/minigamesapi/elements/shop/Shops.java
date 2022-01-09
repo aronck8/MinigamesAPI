@@ -49,8 +49,7 @@ public final class Shops {
      */
     public static void processClickEvent(InventoryClickEvent e) {
         if(e.getClickedInventory()==null)return;
-        String title = e.getClickedInventory().getTitle();
-        if(title==null)return;
+        String title = e.getView().getTitle();
         if(shops.get(title)!=null){
             shops.get(title).handleItemClicked(e);
         }else{
