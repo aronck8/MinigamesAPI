@@ -1,16 +1,64 @@
 package com.aronck.minigamesapi.minigame;
 
+import com.aronck.minigamesapi.elements.locations.LocationChooser;
+import com.aronck.minigamesapi.elements.map.GameMap;
+import com.aronck.minigamesapi.elements.scheduler.Spawner;
+import com.aronck.minigamesapi.elements.teams.Conditional;
+import com.aronck.minigamesapi.elements.teams.Team;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
+import com.aronck.minigamesapi.utils.PluginUtils;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MinigameBuilder extends MinigameBuilderStage {
+public class MinigameBuilder{
 
-    public MinigameBuilder(JavaPlugin main) {
-        super(new Minigame(main));
+    private Minigame minigame;
+
+    public MinigameBuilder(JavaPlugin plugin) {
+        this.minigame = new Minigame(plugin);
     }
 
-    public BuilderStageTwo setTeams(TeamsConfiguration teamsConfiguration) {
-        minigame.teamsConfiguration = teamsConfiguration;
-        return new BuilderStageTwo(minigame);
+    /*public MinigameBuilder addEvent(Event event) {
+        minigame.eventsManager.addEvent(event.getClazz(), event.getAction());
+        return this;
     }
+
+    public <T extends org.bukkit.event.Event> MinigameBuilder addEvent(Class<T> clazz, IEvent<T> event){
+        minigame.eventsManager.addEvent(clazz, event);
+        return this;
+    }*/
+
+    public MinigameBuilder addMap(GameMap map) {
+        minigame.maps.add(map);
+        if(minigame.currentMap==null)minigame.currentMap = map;
+        return this;
+    }
+
+    public MinigameBuilder setLocationChooserItem(ItemStack item) {
+        minigame.locationChooserItem = item;
+        return this;
+    }
+
+    public MinigameBuilder setTeamsChooserItem(ItemStack item) {
+        minigame.locationChooserItem = item;
+        return this;
+    }
+
+    public MinigameBuilder setCountdown(Countdown countdown) {
+        minigame.countDown = countdown;
+        return this;
+    }
+
+    public MinigameBuilder addMinigameState(AbstractState state){
+        state.minigame = minigame;
+        minigame.lastState.setNextState(state);
+        minigame.lastState = state;
+        return this;
+    }
+
+    public Minigame build() {
+        minigame.preInitGameStates();
+        return minigame;
+    }
+
 }

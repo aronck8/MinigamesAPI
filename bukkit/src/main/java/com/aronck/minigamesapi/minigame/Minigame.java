@@ -3,7 +3,7 @@ package com.aronck.minigamesapi.minigame;
 import com.aronck.minigamesapi.elements.countDown.StandardCountdown;
 import com.aronck.minigamesapi.elements.event.EventsManager;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
-import com.aronck.minigamesapi.elements.map.MapConfiguration;
+import com.aronck.minigamesapi.elements.map.GameMap;
 import com.aronck.minigamesapi.elements.scheduler.SpawnerManager;
 import com.aronck.minigamesapi.elements.tablist.TabListManager;
 import com.aronck.minigamesapi.elements.teams.Conditional;
@@ -28,21 +28,20 @@ public class Minigame {
 	AbstractState currentState;
 	AbstractState nextState;
 	AbstractState lastState;
+	AbstractState cleanUpState = new PostGameCleanupState(this);
 
 	JavaPlugin main;
 
-	TeamsConfiguration teamsConfiguration;
-	MapConfiguration mapConfiguration;
+	GameMap currentMap;
 
 	ItemStack locationChooserItem = new ItemStack(Material.COMPASS);
-	ItemStack teamChooserItem = new ItemStack(Material.WOOL);
+	ItemStack teamChooserItem = new ItemStack(Material.STONE);
 
 	EventsManager eventsManager;
-	SpawnerManager spawnerManager;
 	TabListManager tabListManager;
 
-	List<Conditional> startConditions;
 	List<LocationChooser> locationChoosers;
+	List<GameMap> maps;
 
 	Countdown countDown = new StandardCountdown(30);
 
@@ -62,10 +61,9 @@ public class Minigame {
 		nextState = firstState;
 		lastState = nextState;
 		eventsManager = new EventsManager(main);
-		spawnerManager = new SpawnerManager(main);
 		tabListManager = new TabListManager(this);
-		startConditions = new ArrayList<>();
 		locationChoosers = new ArrayList<>();
+		maps = new ArrayList<>();
 
 		Minigames.addMinigame(this);
 	}
@@ -79,21 +77,6 @@ public class Minigame {
 	 * starts the main minigame after the init and countdown phase
 	 */
 	void startMiniGame(){
-
-		spawnerManager.startSpawners();
-
-		System.out.println("starting Minigame");
-		//teleport players to their start position
-		if(teamsConfiguration!=null) {
-			for (Team team : teamsConfiguration.getTeams()) {
-				for (Player player : team.getPlayers()) {
-					if(team.getData().getRandomRespawnLocationFromList()!=null)
-						player.teleport(team.getData().getRandomRespawnLocationFromList());
-					team.getData().getRandomKitFromList().applyToPlayer(player);
-				}
-			}
-		}
-
 		startPostStartTask();
 	}
 
@@ -114,7 +97,7 @@ public class Minigame {
 	 */
 	private void checkConditionsAndStartGame(){
 
-		boolean canStart = startConditions.stream().allMatch(Conditional::evaluate);
+		boolean canStart = currentMap.getStartConditions().stream().allMatch(Conditional::evaluate);
 		if(canStart){
 			startCountdown(STANDART_COUNTDOWN_TIME);
 		}
@@ -151,8 +134,8 @@ public class Minigame {
 	 * @see #startPostStartTask()
 	 */
 	void checkConditionsAndEndGame(){
-		if(teamsConfiguration!=null) {
-			for (Team team : teamsConfiguration.getTeams()) {
+		if(getTeamsConfiguration()!=null) {
+			for (Team team : getTeamsConfiguration().getTeams()) {
 
 				boolean won = team.getData().getWinConditions().stream().allMatch(Conditional::evaluate);
 
@@ -185,7 +168,6 @@ public class Minigame {
 		}
 		//if the last state is reached, stop the minigame
 		if(nextState==null){
-			stopMinigame();
 			return;
 		}
 
@@ -195,8 +177,10 @@ public class Minigame {
 	}
 
 	public void stopMinigame(){
-		spawnerManager.stopSpawners();
-		if(mapConfiguration!=null)mapConfiguration.resetMap();
+		if(currentState!=lastState){
+			currentState.stop();
+			cleanUpState.start();
+		}
 	}
 
 	void preInitGameStates(){
@@ -207,8 +191,8 @@ public class Minigame {
 		}
 	}
 
-	public boolean isInActiveState(){
-		return currentState.isActiveState;
+	public boolean isIngamePhase(){
+		return currentState.gamePhase.equals(GamePhase.INGAME);
 	}
 
 	public AbstractState getCurrentState(){
@@ -216,11 +200,21 @@ public class Minigame {
 	}
 
 	public TeamsConfiguration getTeamsConfiguration(){
-		return teamsConfiguration;
+		return currentMap.getTeamsConfiguration();
 	}
 
-	public MapConfiguration getMapConfiguration(){
-		return mapConfiguration;
+	public void selectCurrentMap(GameMap map){
+		currentMap = map;
+	}
+
+	public void selectCurrentMap(String name){
+		for(GameMap map : maps){
+			if(map.getName().equals(name))currentMap = map;
+		}
+	}
+
+	public GameMap getCurrentMap(){
+		return currentMap;
 	}
 
 	public List<LocationChooser> getLocationChoosers(){
@@ -236,16 +230,12 @@ public class Minigame {
 	}
 
 	public Team getTeamOfPlayer(Player player){
-		if(teamsConfiguration==null)return null;
-		return teamsConfiguration.getTeamOfPlayer(player);
+		if(currentMap!=null) return currentMap.getTeamsConfiguration().getTeamOfPlayer(player);
+		return null;
 	}
 
 	public EventsManager getEventsManager() {
 		return eventsManager;
-	}
-
-	public List<Team> getTeams(){
-		return teamsConfiguration==null ? new ArrayList<>() : teamsConfiguration.getTeams();
 	}
 
 	public int getID() {

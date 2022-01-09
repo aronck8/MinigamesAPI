@@ -1,18 +1,30 @@
 package com.aronck.minigamesapi.elements.teams;
 
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
+import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class TeamsData {
+
+	String name;
+	DyeColor teamColor;
+	ItemStack teamItem = new ItemStack(Material.STONE);
 
 	List<Conditional> respawnConditions;
 	List<Location> respawnLocations;
 	List<Kit> kits;
 	List<Conditional> winConditions;
+	BiConsumer<Minigame, Team> initMethod;
+	boolean canJoinTeamAfterStart = false;
 
 	TeamsData(){
 		respawnConditions = new ArrayList<>();
@@ -21,10 +33,21 @@ public class TeamsData {
 		winConditions = new ArrayList<>();
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public DyeColor getTeamColor() {
+		return teamColor;
+	}
+
+	public ItemStack getTeamItem() {
+		return teamItem;
+	}
+
 	public List<Conditional> getRespawnConditions() {
 		return respawnConditions;
 	}
-
 
 	public List<Location> getRespawnLocations() {
 		return respawnLocations;
@@ -48,4 +71,7 @@ public class TeamsData {
 		return winConditions;
 	}
 
+	public boolean canJoinTeamAfterStart() {
+		return canJoinTeamAfterStart;
+	}
 }
