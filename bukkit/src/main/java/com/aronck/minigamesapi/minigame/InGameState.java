@@ -1,21 +1,22 @@
 package com.aronck.minigamesapi.minigame;
 
+import com.aronck.minigamesapi.elements.map.GameMap;
 import com.aronck.minigamesapi.events.custom.MinigameStartEvent;
 import org.bukkit.Bukkit;
 
 public class InGameState extends AbstractState{
 
     public InGameState(Minigame minigame) {
-        super(minigame, "ingame", true);
+        super(minigame, "ingame", GamePhase.INGAME);
     }
 
     public InGameState(boolean startNextOnFinish) {
-        super("ingame", true, startNextOnFinish);
+        super("ingame", GamePhase.INGAME, startNextOnFinish);
     }
 
     @Override
     protected void preInit() {
-        if (minigame.mapConfiguration != null) minigame.mapConfiguration.fillChests();
+
     }
 
     @Override
@@ -23,15 +24,21 @@ public class InGameState extends AbstractState{
         MinigameStartEvent minigameStartEvent = new MinigameStartEvent(minigame);
         Bukkit.getPluginManager().callEvent(minigameStartEvent);
         if(!minigameStartEvent.isCancelled())minigame.startMiniGame();
+        System.out.println("starting Minigame");
+        //teleport players to their start position
+        if(minigame.currentMap!=null) {
+            minigame.getCurrentMap().initOnMinigameStart();
+        }
     }
 
     @Override
     protected void onStop() {
-
+        minigame.getCurrentMap().performOnGameStopTasks();
     }
 
     @Override
     protected void cleanUp() {
-        minigame.mapConfiguration.resetMap();
+        GameMap currentMap = minigame.getCurrentMap();
+        if(currentMap !=null) currentMap.resetMap();
     }
 }

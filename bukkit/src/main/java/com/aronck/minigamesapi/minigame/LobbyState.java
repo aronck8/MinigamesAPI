@@ -6,11 +6,11 @@ import org.bukkit.Bukkit;
 public class LobbyState extends AbstractState{
 
     public LobbyState(Minigame minigame) {
-        super(minigame, "lobby", false);
+        super(minigame, "lobby", GamePhase.PREGAME);
     }
 
     public LobbyState() {
-        super("lobby", false, false);
+        super("lobby", GamePhase.PREGAME, false);
     }
 
     @Override

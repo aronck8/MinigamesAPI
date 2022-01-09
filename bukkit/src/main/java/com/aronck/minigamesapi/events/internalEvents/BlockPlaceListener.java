@@ -15,6 +15,6 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event){
-        if(minigame.getMapConfiguration()!=null) minigame.getMapConfiguration().handleBlockPlaced(event);
+        if(minigame.getCurrentMap()!=null) minigame.getCurrentMap().processBlockPlacedEvent(event);
     }
 }

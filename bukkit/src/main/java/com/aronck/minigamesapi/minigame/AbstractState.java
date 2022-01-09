@@ -7,29 +7,29 @@ public abstract class AbstractState {
     protected Minigame minigame;
     protected JavaPlugin main;
     protected final String NAME;
-    protected final boolean isActiveState;
+    protected final GamePhase gamePhase;
     protected AbstractState nextState;
     protected boolean startNextStateOnFinish = true;
-    protected boolean running;
+    protected boolean running = false;
 
-    protected AbstractState(Minigame minigame, String name, boolean isActiveState) {
+    protected AbstractState(Minigame minigame, String name, GamePhase gamePhase) {
         this.minigame = minigame;
         main = minigame.main;
         NAME = name;
-        this.isActiveState = isActiveState;
+        this.gamePhase = gamePhase;
     }
 
-    protected AbstractState(Minigame minigame, String name, boolean isActiveState, boolean startNextStateOnFinish) {
+    protected AbstractState(Minigame minigame, String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
         this.minigame = minigame;
         main = minigame.main;
         NAME = name;
-        this.isActiveState = isActiveState;
+        this.gamePhase = gamePhase;
         this.startNextStateOnFinish = startNextStateOnFinish;
     }
 
-    protected AbstractState(String name, boolean isActiveState, boolean startNextStateOnFinish) {
+    protected AbstractState(String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
         NAME = name;
-        this.isActiveState = isActiveState;
+        this.gamePhase = gamePhase;
         this.startNextStateOnFinish = startNextStateOnFinish;
     }
 

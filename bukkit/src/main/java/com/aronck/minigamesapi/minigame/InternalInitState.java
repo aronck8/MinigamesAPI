@@ -11,7 +11,7 @@ import tests.Main;
 public class InternalInitState extends AbstractState{
 
     public InternalInitState(Minigame minigame) {
-        super(minigame, "init", false, true);
+        super(minigame, "init", GamePhase.PREGAME, true);
     }
 
     @Override
