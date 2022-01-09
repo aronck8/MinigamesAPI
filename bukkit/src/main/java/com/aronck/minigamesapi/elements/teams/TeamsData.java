@@ -12,18 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class TeamsData {
 
 	String name;
 	DyeColor teamColor;
-	ItemStack teamItem = new ItemStack(Material.STONE);
 
 	List<Conditional> respawnConditions;
 	List<Location> respawnLocations;
 	List<Kit> kits;
 	List<Conditional> winConditions;
 	BiConsumer<Minigame, Team> initMethod;
+	Function<Team, ItemStack> createItemStack = team -> PluginUtils.getItem(Material.BED, 1,
+			"Team: " + team.getData().getName(),
+			team.getNumberOfUsedSlots() + "/" + team.getMaxPlayers());
 	boolean canJoinTeamAfterStart = false;
 
 	TeamsData(){
@@ -41,8 +44,8 @@ public class TeamsData {
 		return teamColor;
 	}
 
-	public ItemStack getTeamItem() {
-		return teamItem;
+	public ItemStack getTeamItem(Team team) {
+		return createItemStack.apply(team);
 	}
 
 	public List<Conditional> getRespawnConditions() {

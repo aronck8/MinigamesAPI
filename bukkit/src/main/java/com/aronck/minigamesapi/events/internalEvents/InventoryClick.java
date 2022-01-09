@@ -32,19 +32,32 @@ public final class InventoryClick implements Listener {
 			e.setCancelled(true);
 			for(LocationChooser chooser : minigame.getLocationChoosers()){
 				if(!chooser.getItem().equals(e.getCurrentItem()))continue;
-				e.getWhoClicked().sendMessage("Die Position für: \"" + chooser.getKey() + "\" wurde gesetzt!");
-				Config.saveLocation(new Location(chooser.getKey(), e.getWhoClicked().getLocation()));
+				player.sendMessage("Die Position für: \"" + chooser.getKey() + "\" wurde gesetzt!");
+				Config.saveLocation(new Location(chooser.getKey(), player.getLocation()));
 			}
 		}else if(title.equals(PluginConstants.TEAM_CHOOSER_INVENTORY_NAME)){
 			e.setCancelled(true);
 			TeamsConfiguration teamsConfiguration = minigame.getCurrentMap().getTeamsConfiguration();
 			Team team = teamsConfiguration.getTeamFromItem(e.getCurrentItem());
-			if(team==null || !team.hasFreeSlots()){
-				e.getWhoClicked().sendMessage("§cDieses Team ist bereits voll!");
+
+			if(team == null){
+				player.sendMessage("§eDas Team konnte nicht gefunden werden. Kontaktieren Sie einen Administrator!");
 				return;
 			}
 
+			if(team.equals(teamsConfiguration.getTeamOfPlayer(player))){
+				player.sendMessage("§cDu bist bereits in dem Team!");
+				return;
+			}
+
+			if(!team.hasFreeSlots()){
+				player.sendMessage("§cDieses Team ist bereits voll!");
+				return;
+			}
+
+			player.sendMessage("§eDu wurdest dem Team erfolgreich hinzugefügt");
 			teamsConfiguration.addPlayerToTeam(player, team, minigame.isIngamePhase());
+			teamsConfiguration.openTeamsChooserInventory(player);
 
 		}
 

@@ -33,10 +33,14 @@ public class Team {
         this.maxPlayers = maxPlayers;
         players = new ArrayList<>();
         deadPlayers = new ArrayList<>();
-        data = new TeamsData();
+        data = new TeamsDataBuilder(ID + "").build();
     }
 
     void initTeam(Minigame minigame){
+    }
+
+    public ItemStack getTeamItem(){
+        return data.getTeamItem(this);
     }
 
     public int getID(){
@@ -45,6 +49,10 @@ public class Team {
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    public int getNumberOfUsedSlots(){
+        return players.size();
     }
 
     public void addPlayer(Player player){

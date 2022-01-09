@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class TeamsDataBuilder {
 
@@ -22,8 +23,8 @@ public class TeamsDataBuilder {
 		return this;
 	}
 
-	public TeamsDataBuilder addTeamsItem(ItemStack itemStack){
-		teamsData.teamItem = itemStack;
+	public TeamsDataBuilder addTeamsItem(Function<Team, ItemStack> itemStackProvider){
+		teamsData.createItemStack = itemStackProvider;
 		return this;
 	}
 

@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,15 @@ public final class PluginUtils {
 		return item;
 	}
 
+	public static ItemStack getItem(Material material, int amount, String name, String... lore){
+		ItemStack item = new ItemStack(material, amount);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(name);
+		meta.setLore(Arrays.asList(lore));
+		item.setItemMeta(meta);
+		return item;
+	}
+
 	public static ItemStack getItem(Material material, int amount, String name, Enchantment enchantment, int level, boolean b){
 		ItemStack item = new ItemStack(material, amount);
 		ItemMeta meta = item.getItemMeta();
@@ -92,6 +102,16 @@ public final class PluginUtils {
 		item.setAmount(amount);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public static ItemStack getItem(ItemStack itemStack, int amount, String name, String... lore){
+		ItemStack item = new ItemStack(itemStack);
+		item.setAmount(amount);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(name);
+		meta.setLore(Arrays.asList(lore));
 		item.setItemMeta(meta);
 		return item;
 	}

@@ -26,7 +26,7 @@ public final class InteractEvent implements Listener {
 			}else if(minigame.getTeamChooserItem().equals(e.getItem())){
 				TeamsConfiguration configuration = minigame.getTeamsConfiguration();
 				if(configuration!=null){
-					configuration.openTeamsChoserInventory(e.getPlayer());
+					configuration.openTeamsChooserInventory(e.getPlayer());
 					//configuration.positionPlayerInTeamWithPreference(e.getPlayer(), configuration.getTeamFromItem(e.getItem()), minigame.isIngamePhase());
 				}
 			}

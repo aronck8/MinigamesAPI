@@ -63,7 +63,16 @@ public class TeamsConfiguration {
 	}
 
 	public boolean addPlayerToTeam(Player player, Team team, boolean hasGameStarted){
+		Team currentTeam = teamsOfPlayers.get(player.getUniqueId());
+
+		if(team.equals(currentTeam))return true;
+
 		if(hasGameStarted && !team.getData().canJoinTeamAfterStart()) return false;
+
+		if(!team.hasFreeSlots())return false;
+
+		if(currentTeam!=null) currentTeam.getPlayers().remove(player);
+
 		teamsOfPlayers.put(player.getUniqueId(), team);
 		team.addPlayer(player);
 		return true;
@@ -134,16 +143,16 @@ public class TeamsConfiguration {
 
 	public Team getTeamFromItem(ItemStack item) {
 		for(Team team : teams){
-			if (item.equals(team.getData().getTeamItem())) return team;
+			if (item.equals(team.getTeamItem())) return team;
 		}
 		return null;
 	}
 
-	public void openTeamsChoserInventory(Player player) {
+	public void openTeamsChooserInventory(Player player) {
 
 		Inventory inventory = Bukkit.createInventory(player, PluginUtils.convertToMultiplesOfBase(teams.size(), 9), PluginConstants.TEAM_CHOOSER_INVENTORY_NAME);
 		for(int i = 0; i<teams.size(); i++){
-			inventory.setItem(i, teams.get(i).getData().getTeamItem());
+			inventory.setItem(i, teams.get(i).getTeamItem());
 		}
 
 		player.openInventory(inventory);
