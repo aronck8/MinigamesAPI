@@ -17,10 +17,11 @@ public abstract class Countdown {
     public Countdown(long timerStep, int duration) {
         this.timerStep = timerStep;
         this.duration = duration;
+        currentContdownTime = duration;
     }
 
     public void start(Minigame minigame){
-        start(minigame, duration == 0 ? STANDARD_DURATION : duration);
+        start(minigame, duration == 0 ? STANDARD_DURATION : currentContdownTime);
     }
 
     public void start(Minigame minigame, int time){
@@ -34,9 +35,10 @@ public abstract class Countdown {
             public void run() {
 
                 if(current>=1)tick(minigame, current);
-                else if(current==0) lastTick(minigame, currentContdownTime);
+                else if(current==0) lastTick(minigame, duration);
                 else stop();
                 current--;
+                currentContdownTime = current;
             }
         }, 0, timerStep);
     }
