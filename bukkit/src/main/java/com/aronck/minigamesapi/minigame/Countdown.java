@@ -29,7 +29,7 @@ public abstract class Countdown {
         firstTick(minigame, time);
         currentContdownTime = time;
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
-            int current = time;
+            private int current = time;
             @Override
             public void run() {
 
