@@ -1,13 +1,16 @@
 package com.aronck.minigamesapi.elements.teams;
 
 import com.aronck.minigamesapi.events.custom.FinalDeathEvent;
+import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +20,6 @@ public class Team {
     //main properties of a team
     private final int ID;
     private int maxPlayers;
-    private String name;
-    private DyeColor teamColor;
 
     //ingame data like list of players, that are already dead
     private ArrayList<Player> players;
@@ -33,7 +34,9 @@ public class Team {
         players = new ArrayList<>();
         deadPlayers = new ArrayList<>();
         data = new TeamsData();
-        name = ID + "";
+    }
+
+    void initTeam(Minigame minigame){
     }
 
     public int getID(){
@@ -42,22 +45,6 @@ public class Team {
 
     public int getMaxPlayers() {
         return maxPlayers;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public DyeColor getTeamColor() {
-        return teamColor;
-    }
-
-    public void setTeamColor(DyeColor teamColor) {
-        this.teamColor = teamColor;
     }
 
     public void addPlayer(Player player){
@@ -74,6 +61,10 @@ public class Team {
 
     public int getNumberOfFreeSlots(){
         return maxPlayers - players.size();
+    }
+
+    public boolean hasFreeSlots(){
+        return getNumberOfFreeSlots()>0;
     }
 
 

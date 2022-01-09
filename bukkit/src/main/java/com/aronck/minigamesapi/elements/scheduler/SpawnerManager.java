@@ -8,14 +8,8 @@ public class SpawnerManager {
 
     private ArrayList<Spawner> spawners = new ArrayList<>();
 
-    private JavaPlugin main;
-
-    public SpawnerManager(JavaPlugin main) {
-        this.main = main;
-    }
-
     public void startSpawners(){
-        spawners.forEach(spawner -> spawner.start(main));
+        spawners.forEach(Spawner::start);
     }
 
     public void stopSpawners(){

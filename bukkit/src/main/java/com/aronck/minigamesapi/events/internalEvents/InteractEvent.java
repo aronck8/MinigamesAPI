@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.events.internalEvents;
 
+import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.event.EventHandler;
@@ -19,8 +20,15 @@ public final class InteractEvent implements Listener {
 	public void onInteract(PlayerInteractEvent e){
 		if(e.getAction()== Action.RIGHT_CLICK_AIR || e.getAction()==Action.RIGHT_CLICK_BLOCK){
 			if(minigame.getLocationChooserItem().equals(e.getItem())){
+				if(minigame.isIngamePhase())return;
 				e.setCancelled(true);
 				PluginUtils.openLocationChooserInventory(minigame, e.getPlayer());
+			}else if(minigame.getTeamChooserItem().equals(e.getItem())){
+				TeamsConfiguration configuration = minigame.getTeamsConfiguration();
+				if(configuration!=null){
+					configuration.openTeamsChoserInventory(e.getPlayer());
+					//configuration.positionPlayerInTeamWithPreference(e.getPlayer(), configuration.getTeamFromItem(e.getItem()), minigame.isIngamePhase());
+				}
 			}
 		}
 	}

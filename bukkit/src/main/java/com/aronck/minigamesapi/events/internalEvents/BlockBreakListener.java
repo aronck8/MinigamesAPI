@@ -15,7 +15,7 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event){
-        if(minigame.getMapConfiguration()!=null) minigame.getMapConfiguration().handleBlockBreak(event);
+        if(minigame.getCurrentMap()!=null) minigame.getCurrentMap().processBlockBreakEvent(event);
     }
 
 }

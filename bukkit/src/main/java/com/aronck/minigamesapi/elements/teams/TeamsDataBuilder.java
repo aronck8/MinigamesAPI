@@ -1,38 +1,69 @@
 package com.aronck.minigamesapi.elements.teams;
 
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
+import com.aronck.minigamesapi.minigame.Minigame;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.function.BiConsumer;
 
 public class TeamsDataBuilder {
 
-	private TeamsData action;
+	private TeamsData teamsData;
 
-	public TeamsDataBuilder(){
-		action = new TeamsData();
+	public TeamsDataBuilder(String name){
+		teamsData = new TeamsData();
+		teamsData.name = name;
+	}
+
+	public TeamsDataBuilder addColor(DyeColor color){
+		teamsData.teamColor = color;
+		return this;
+	}
+
+	public TeamsDataBuilder addTeamsItem(ItemStack itemStack){
+		teamsData.teamItem = itemStack;
+		return this;
 	}
 
 	public TeamsDataBuilder addRespawnCondition(Conditional condition){
-		action.respawnConditions.add(condition);
+		teamsData.respawnConditions.add(condition);
 		return this;
 	}
 
 	public TeamsDataBuilder addRespawnLocation(Location location){
-		action.respawnLocations.add(location);
+		teamsData.respawnLocations.add(location);
 		return this;
 	}
 
 	public TeamsDataBuilder addKit(Kit kit){
-		action.kits.add(kit);
+		teamsData.kits.add(kit);
 		return this;
 	}
 
 	public TeamsDataBuilder addWinCondition(Conditional conditional){
-		action.winConditions.add(conditional);
+		teamsData.winConditions.add(conditional);
+		return this;
+	}
+
+	public TeamsDataBuilder withInitMethod(BiConsumer<Minigame, Team> initMethod){
+		teamsData.initMethod = initMethod;
+		return this;
+	}
+
+	public TeamsDataBuilder enableJoinTeamAfterGameStart(){
+		teamsData.canJoinTeamAfterStart = true;
+		return this;
+	}
+
+	public TeamsDataBuilder disableJoinTeamAfterGameStart(){
+		teamsData.canJoinTeamAfterStart = false;
 		return this;
 	}
 
 	public TeamsData build(){
-		return action;
+		return teamsData;
 	}
 
 }

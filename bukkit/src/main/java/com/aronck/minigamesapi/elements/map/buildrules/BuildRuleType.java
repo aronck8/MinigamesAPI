@@ -1,4 +1,4 @@
-package com.aronck.minigamesapi.elements.map;
+package com.aronck.minigamesapi.elements.map.buildrules;
 
 
 /**

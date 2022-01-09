@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class RandomizedInventory extends Kit{
@@ -48,7 +49,7 @@ public class RandomizedInventory extends Kit{
             if(currentIndex>=availableSpace)return items;
             if(PluginUtils.getRandomInt(100)<probabilityOfItems.get(item))items[currentIndex++] = item;
         }
-        ArrayList<ItemStack> itemList = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(items, 0, currentIndex)));
+        List<ItemStack> itemList = Arrays.asList(Arrays.copyOfRange(items, 0, currentIndex));
         while (itemList.size()<availableSpace){
             itemList.add(PluginUtils.getRandomInt(itemList.size()-1), null);
         }

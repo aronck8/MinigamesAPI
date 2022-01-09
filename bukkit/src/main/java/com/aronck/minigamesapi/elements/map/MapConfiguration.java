@@ -1,10 +1,12 @@
 package com.aronck.minigamesapi.elements.map;
 
+import com.aronck.minigamesapi.elements.map.buildrules.BuildActionType;
+import com.aronck.minigamesapi.elements.map.buildrules.BuildRule;
+import com.aronck.minigamesapi.elements.map.buildrules.BuildRuleType;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import com.aronck.minigamesapi.utils.Tuple;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,59 +19,50 @@ import java.util.*;
 
 public class MapConfiguration {
 
-    private Map map;
-
-    //Teamsconfiguration used for the BuildRules e.g. a buildrule that checks
-    //if the block has been placed by a players teammate
-    private TeamsConfiguration teamsConfiguration;
-
     private List<BuildRule> buildRules = new ArrayList<>();
 
     private HashMap<List<Location>, List<Tuple<Integer, List<ItemStack>>>> chestContents = new HashMap<>();
 
-    public MapConfiguration(){
-        this(new Map(Bukkit.getWorld("world")));
-    }
-
-    public MapConfiguration(Map map) {
-        this.map = map;
-    }
-
-    public void handleBlockBreak(BlockBreakEvent event){
+    public void handleBlockBreak(GameMap gameMap, TeamsConfiguration teamsConfiguration, BlockBreakEvent event){
 
         for(BuildRule buildRule : buildRules){
-            if(buildRule.getType().equals(BuildRuleType.POSITIVE)){
+            if (BuildActionType.BREAK.equals(buildRule.getActionType()) || BuildActionType.BOTH.equals(buildRule.getActionType())) {
+                if (buildRule.getRuleType().equals(BuildRuleType.POSITIVE)) {
+                    //if one positive BuildRule is true, allow the action
+                    if (buildRule.isAllowed(gameMap, teamsConfiguration, event.getPlayer(), event.getBlock())) {
+                        break;
+                    }
+                } else if (buildRule.getRuleType().equals(BuildRuleType.NEGATIVE)) {
+                    if (!buildRule.isAllowed(gameMap, teamsConfiguration, event.getPlayer(), event.getBlock())) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void handleBlockPlaced(GameMap gameMap, TeamsConfiguration teamsConfiguration, BlockPlaceEvent event){
+        for(BuildRule buildRule : buildRules){
+            if(!(buildRule.getActionType().equals(BuildActionType.PLACE) || buildRule.getActionType().equals(BuildActionType.BOTH))) continue;
+            if(buildRule.getRuleType().equals(BuildRuleType.POSITIVE)){
                 //if one positive BuildRule is true, allow the action
-                if(buildRule.isAllowed(event.getPlayer(), event.getBlock())){
+                if(buildRule.isAllowed(gameMap, teamsConfiguration, event.getPlayer(), event.getBlock())){
                     break;
                 }
-            }else if(buildRule.getType().equals(BuildRuleType.NEGATIVE)){
-                if(!buildRule.isAllowed(event.getPlayer(), event.getBlock())){
+            }else if(buildRule.getRuleType().equals(BuildRuleType.NEGATIVE)){
+                if(!buildRule.isAllowed(gameMap, teamsConfiguration, event.getPlayer(), event.getBlock())){
                     event.setCancelled(true);
                     break;
                 }
             }
         }
-
-        if(!event.isCancelled())map.processBlockBreakEvent(event);
-
-    }
-
-    public void handleBlockPlaced(BlockPlaceEvent event){
-        map.processBlockPlacedEvent(event);
     }
 
     public MapConfiguration addBuildRule(BuildRule buildRule){
-        buildRule.setMap(map);
         buildRules.add(buildRule);
         return this;
-    }
-
-    public void setTeamsConfiguration(TeamsConfiguration teamsConfiguration) {
-        this.teamsConfiguration = teamsConfiguration;
-        for(BuildRule buildRule : buildRules){
-            buildRule.setTeamsConfiguration(teamsConfiguration);
-        }
     }
 
     public MapConfiguration addKitChest(Location location, ItemStack... content){
@@ -82,8 +75,6 @@ public class MapConfiguration {
         return this;
     }
 
-
-
     public MapConfiguration addKitChests(List<Location> locations, ItemStack... content){
         addKitChests(locations, Arrays.asList(content), 100);
         return this;
@@ -95,21 +86,21 @@ public class MapConfiguration {
         return this;
     }
 
-    List<Tuple<Integer, List<ItemStack>>> getListOfKitsAndProbabilities(Location location){
+    private List<Tuple<Integer, List<ItemStack>>> getListOfKitsAndProbabilities(Location location){
         for (List<Location> locations : chestContents.keySet()) {
             if (locations.contains(location)) return chestContents.get(locations);
         }
         return null;
     }
 
-    List<Tuple<Integer, List<ItemStack>>> getListOfKitsAndProbabilities(List<Location> locations){
+    private List<Tuple<Integer, List<ItemStack>>> getListOfKitsAndProbabilities(List<Location> locations){
         for (List<Location> locations1 : chestContents.keySet()) {
             if (locations1.containsAll(locations)) return chestContents.get(locations1);
         }
         return null;
     }
 
-    void fillChest(Location location){
+    private void fillChest(Location location){
         Block block = location.getBlock();
         if(!(block.getType().equals(Material.CHEST))) block.setType(Material.CHEST);
 
@@ -117,7 +108,7 @@ public class MapConfiguration {
         chest.getBlockInventory().setContents(getKit(location));
     }
 
-    ItemStack[] getKit(Location location){
+    private ItemStack[] getKit(Location location){
 
         List<Tuple<Integer, List<ItemStack>>> listOfProbabilitiesAndKits = getListOfKitsAndProbabilities(location);
 
@@ -142,7 +133,4 @@ public class MapConfiguration {
         return chestContents;
     }
 
-    public void resetMap() {
-
-    }
 }

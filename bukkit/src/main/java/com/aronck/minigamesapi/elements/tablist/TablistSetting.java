@@ -7,6 +7,4 @@ public abstract class TablistSetting {
 
     public abstract String renderPlayer(Player player, Team team);
 
-    public abstract String renderTeamlessPlayer(Player player);
-
 }

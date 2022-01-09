@@ -20,6 +20,7 @@ public final class PluginUtils {
 
 	public static void openLocationChooserInventory(Minigame minigame, Player player){
 
+		if(!player.hasPermission("minigames.setup")) return;
 		List<LocationChooser> choosers = minigame.getLocationChoosers().stream()
 				.filter(locationChooser -> locationChooser.getType().equals(ChooserType.GUI))
 				.collect(Collectors.toList());

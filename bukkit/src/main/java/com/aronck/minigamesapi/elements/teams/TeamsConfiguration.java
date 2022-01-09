@@ -1,7 +1,12 @@
 package com.aronck.minigamesapi.elements.teams;
 
-import org.bukkit.DyeColor;
+import com.aronck.minigamesapi.utils.PluginConstants;
+import com.aronck.minigamesapi.utils.PluginUtils;
+import org.apache.commons.lang.NullArgumentException;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,31 +28,18 @@ public class TeamsConfiguration {
 		parsePlayerBalance(playerBalance);
 	}
 
-	public TeamsConfiguration(String playerBalance, TeamChooserType type, String... teamNames) {
-		this.type = type;
-		teams = new ArrayList<>();
-		parsePlayerBalance(playerBalance);
-		for (int i = 0; i < teamNames.length; i++) {
-			String teamName = teamNames[i];
-			teams.get(i).setName(teamName);
-		}
-	}
-
-	public TeamsConfiguration(String playerBalance, TeamChooserType type, String[] teamNames, DyeColor[] colors) {
-		this.type = type;
-		teams = new ArrayList<>();
-		parsePlayerBalance(playerBalance);
-		for (int i = 0; i < teamNames.length; i++) {
-			String teamName = teamNames[i];
-			teams.get(i).setName(teamName);
-		}
-
-		for (int i = 0;i<colors.length;i++){
-			teams.get(i).setTeamColor(colors[i]);
+	public void initializeTeamsOnMinigameStart(){
+		for (Team team : teams) {
+			for (Player player : team.getPlayers()) {
+				if(team.getData().getRandomRespawnLocationFromList()!=null)
+					player.teleport(team.getData().getRandomRespawnLocationFromList());
+				team.getData().getRandomKitFromList().applyToPlayer(player);
+			}
 		}
 	}
 
 	public TeamsConfiguration setTeamsData(TeamsData data, int... teamNumbers){
+		if(teamNumbers.length==0) throw new NullArgumentException("There was no team specified to which the data should be set to.");
 		for(int i : teamNumbers)
 			if(i == ALL_TEAMS){
 				teams.forEach(team -> team.data = data);
@@ -70,9 +62,11 @@ public class TeamsConfiguration {
 		return type;
 	}
 
-	public void addPlayerToTeam(Player player, Team team){
+	public boolean addPlayerToTeam(Player player, Team team, boolean hasGameStarted){
+		if(hasGameStarted && !team.getData().canJoinTeamAfterStart()) return false;
 		teamsOfPlayers.put(player.getUniqueId(), team);
 		team.addPlayer(player);
+		return true;
 	}
 
 	public Team getTeamOfPlayer(Player player){
@@ -97,4 +91,62 @@ public class TeamsConfiguration {
 		}
 	}
 
+	/**
+	 *
+	 * places a player in a random team to evenly distribute the players.
+	 *
+	 * @param player the player we want to put in a team
+	 * @return true if the player could be placed in any team i.e. if the teams aren't full yet
+	 */
+    public boolean positionPlayerInTeam(Player player, boolean hasGameStarted) {
+		if (teams.isEmpty()) return false;
+		Team maxPeopleLeftTeam = teams.get(0);
+
+		for (Team team : teams) {
+			if(hasGameStarted&&!team.getData().canJoinTeamAfterStart())continue;
+			//check which team has less players(in percentage)
+			if (team.getNumberOfFreeSlots()/team.getMaxPlayers() > maxPeopleLeftTeam.getNumberOfFreeSlots()/team.getMaxPlayers()){
+				maxPeopleLeftTeam = team;
+			}
+		}
+
+		if(!maxPeopleLeftTeam.hasFreeSlots())return false;
+		System.out.println(player.getDisplayName() + " has joined the team: " + maxPeopleLeftTeam.getData().getName());
+		addPlayerToTeam(player, maxPeopleLeftTeam, hasGameStarted);
+		return true;
+    }
+
+	/**
+	 * Places a player in a team. If the specified team still has open slots, the player will be placed in that team,
+	 * if not, he will be placed in any team calculated by the {@link #positionPlayerInTeam(Player, boolean)} method
+	 *
+	 * @param player the player we want to put in a team
+	 * @param requestedTeam the team we'd like to put the player in.
+	 * @return
+	 */
+	public boolean positionPlayerInTeamWithPreference(Player player, Team requestedTeam, boolean hasGameStarted) {
+		if(requestedTeam.hasFreeSlots()){
+			return addPlayerToTeam(player, requestedTeam, hasGameStarted);
+		}
+		positionPlayerInTeam(player, hasGameStarted);
+		return false;
+	}
+
+	public Team getTeamFromItem(ItemStack item) {
+		for(Team team : teams){
+			if (item.equals(team.getData().getTeamItem())) return team;
+		}
+		return null;
+	}
+
+	public void openTeamsChoserInventory(Player player) {
+
+		Inventory inventory = Bukkit.createInventory(player, PluginUtils.convertToMultiplesOfBase(teams.size(), 9), PluginConstants.TEAM_CHOOSER_INVENTORY_NAME);
+		for(int i = 0; i<teams.size(); i++){
+			inventory.setItem(i, teams.get(i).getData().getTeamItem());
+		}
+
+		player.openInventory(inventory);
+
+	}
 }

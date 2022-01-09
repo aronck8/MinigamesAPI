@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.plugin.java.JavaPlugin;
+import tests.Main;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,8 +49,8 @@ public abstract class Spawner {
         this.locations.set(i, location);
     }
 
-    public void start(JavaPlugin main){
-        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, this::spawn, delay, duration);
+    public void start(){
+        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), this::spawn, delay, duration);
     }
 
     protected abstract void spawn();
