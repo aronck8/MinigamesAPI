@@ -29,6 +29,11 @@ public class TeamsConfiguration {
 	}
 
 	public void initializeTeamsOnMinigameStart(){
+		for(Player player : Bukkit.getOnlinePlayers()){
+			if(teamsOfPlayers.get(player.getUniqueId())==null){
+				positionPlayerInTeam(player, false);
+			}
+		}
 		for (Team team : teams) {
 			for (Player player : team.getPlayers()) {
 				if(team.getData().getRandomRespawnLocationFromList()!=null)

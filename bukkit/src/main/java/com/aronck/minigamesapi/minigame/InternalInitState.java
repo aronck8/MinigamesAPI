@@ -46,7 +46,6 @@ public class InternalInitState extends AbstractState{
     private void registerListeners(){
         Bukkit.getPluginManager().registerEvents(new InteractEvent(minigame), main);
         Bukkit.getPluginManager().registerEvents(new InventoryClick(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new JoinEvent(minigame), main);
         Bukkit.getPluginManager().registerEvents(new DeathListener(minigame), main);
         Bukkit.getPluginManager().registerEvents(new RespawnEvent(minigame), main);
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(minigame), main);
