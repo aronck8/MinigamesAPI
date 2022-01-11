@@ -1,11 +1,10 @@
 package com.aronck.minigamesapi.elements.map;
 
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
-import com.aronck.minigamesapi.elements.scheduler.Spawner;
+import com.aronck.minigamesapi.elements.spawner.Spawner;
 import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.Team;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
-import com.aronck.minigamesapi.minigame.MinigameBuilder;
 import com.aronck.minigamesapi.utils.PluginUtils;
 
 public class GameMapBuilderStageTwo {

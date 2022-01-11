@@ -1,18 +1,22 @@
-package com.aronck.minigamesapi.elements.scheduler;
+package com.aronck.minigamesapi.elements.spawner;
 
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class ItemSpawner extends Spawner{
 
     private ArrayList<ItemStack> items = new ArrayList<>();
     private int[] spawnChances;
+    private int maxItemsLayingOnSpawner;
 
     public ItemSpawner(Location location, long delay, long duration, Material material){
         super(location, delay, duration);
@@ -58,11 +62,23 @@ public class ItemSpawner extends Spawner{
         this.spawnChances = spawnChances;
     }
 
+    public boolean canNewObjectSpawn(Location location){
+        Collection<Entity> nearbyEntites = location.getWorld().getNearbyEntities(location, 2, 2, 2);
+        int total = 0;
+        for(Entity entity : nearbyEntites){
+            if(entity instanceof Item){
+                Item item = (Item) entity;
+                total += item.getItemStack().getAmount();
+            }
+        }
+        return total< maxItemsLayingOnSpawner;
+    }
+
     @Override
     public void spawn() {
         for(Location location : locations) {
             if(location==null)continue;
-            if(!canNewItemSpawn(location))return;
+            if(!canNewObjectSpawn(location))return;
             for (int i = 0; i < items.size(); i++) {
                 //check if chances array has defined a value for this item
                 if (spawnChances != null && spawnChances.length > i) {

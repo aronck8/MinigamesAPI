@@ -4,7 +4,6 @@ import com.aronck.minigamesapi.elements.countDown.StandardCountdown;
 import com.aronck.minigamesapi.elements.event.EventsManager;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import com.aronck.minigamesapi.elements.map.GameMap;
-import com.aronck.minigamesapi.elements.scheduler.SpawnerManager;
 import com.aronck.minigamesapi.elements.tablist.TabListManager;
 import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.Team;

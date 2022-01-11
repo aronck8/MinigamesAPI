@@ -1,6 +1,4 @@
-package com.aronck.minigamesapi.elements.scheduler;
-
-import org.bukkit.plugin.java.JavaPlugin;
+package com.aronck.minigamesapi.elements.spawner;
 
 import java.util.ArrayList;
 

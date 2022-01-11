@@ -1,7 +1,7 @@
 package com.aronck.minigamesapi.elements.map;
 
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
-import com.aronck.minigamesapi.elements.scheduler.SpawnerManager;
+import com.aronck.minigamesapi.elements.spawner.SpawnerManager;
 import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import org.bukkit.Bukkit;

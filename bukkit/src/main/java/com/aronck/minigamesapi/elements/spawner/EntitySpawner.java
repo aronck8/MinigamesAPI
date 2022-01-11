@@ -1,4 +1,4 @@
-package com.aronck.minigamesapi.elements.scheduler;
+package com.aronck.minigamesapi.elements.spawner;
 
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Location;
@@ -50,6 +50,11 @@ public class EntitySpawner extends Spawner{
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean canNewObjectSpawn(Location location) {
+        return false;
     }
 
 }

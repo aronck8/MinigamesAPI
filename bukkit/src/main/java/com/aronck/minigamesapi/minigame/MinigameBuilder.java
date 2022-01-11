@@ -1,12 +1,6 @@
 package com.aronck.minigamesapi.minigame;
 
-import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import com.aronck.minigamesapi.elements.map.GameMap;
-import com.aronck.minigamesapi.elements.scheduler.Spawner;
-import com.aronck.minigamesapi.elements.teams.Conditional;
-import com.aronck.minigamesapi.elements.teams.Team;
-import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
-import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
