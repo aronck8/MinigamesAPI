@@ -19,7 +19,7 @@ public class GameMap {
 
     private final String name;
 
-    MapConfiguration configuration;
+    MapConfiguration configuration = new MapConfiguration();
     TeamsConfiguration teamsConfiguration;
     SpawnerManager spawnerManager = new SpawnerManager();
 

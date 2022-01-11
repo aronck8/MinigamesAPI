@@ -191,7 +191,7 @@ public class Minigame {
 	}
 
 	public boolean isIngamePhase(){
-		return currentState.gamePhase.equals(GamePhase.INGAME);
+		return GamePhase.INGAME.equals(currentState.gamePhase);
 	}
 
 	public AbstractState getCurrentState(){
