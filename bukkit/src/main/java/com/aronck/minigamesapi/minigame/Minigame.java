@@ -66,6 +66,7 @@ public class Minigame {
 	}
 
 	public void start(){
+		currentState = firstState;
 		startNextState();
 	}
 
@@ -134,7 +135,7 @@ public class Minigame {
 		if(getTeamsConfiguration()!=null) {
 			for (Team team : getTeamsConfiguration().getTeams()) {
 
-				boolean won = team.getData().getWinConditions().stream().allMatch(Conditional::evaluate);
+				boolean won = team.getData().getWinConditions().stream().allMatch(t -> t.apply(team));
 
 				if(won){
 
@@ -189,6 +190,7 @@ public class Minigame {
 	}
 
 	public boolean isIngamePhase(){
+		if(currentState==null)return false;
 		return GamePhase.INGAME.equals(currentState.gamePhase);
 	}
 

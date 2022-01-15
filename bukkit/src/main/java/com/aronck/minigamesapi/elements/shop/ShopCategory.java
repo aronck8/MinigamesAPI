@@ -124,15 +124,14 @@ public class ShopCategory<K, V>{
      * @param e the {@link InventoryClickEvent} that has to be processed
      */
     public void handleItemClick(InventoryClickEvent e){
+        e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
-        if(item==null || item.getType()==null || Material.AIR.equals(item.getType()))return;
-
+        if(item==null)return;
         //transforming the clicked item(shopItem) to the actual buyable item
         ShopElement<K, V> itemInShop = shopSymbolsForObject.get(item);
         if(!products.contains(itemInShop))return;
 
         buy0(itemInShop, (Player) e.getWhoClicked());
-        e.setCancelled(true);
     }
 
     /**

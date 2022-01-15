@@ -22,7 +22,7 @@ public class TeamsData {
 	List<Conditional> respawnConditions;
 	List<Location> respawnLocations;
 	List<Kit> kits;
-	List<Conditional> winConditions;
+	List<Function<Team, Boolean>> winConditions;
 	BiConsumer<Minigame, Team> initMethod;
 	Function<Team, ItemStack> createItemStack = team -> PluginUtils.getItem(Material.BED, 1,
 			"Team: " + team.getData().getName(),
@@ -70,7 +70,7 @@ public class TeamsData {
 		return kits.get(PluginUtils.getRandomInt(kits.size()-1));
 	}
 
-	public List<Conditional> getWinConditions() {
+	public List<Function<Team, Boolean>> getWinConditions() {
 		return winConditions;
 	}
 

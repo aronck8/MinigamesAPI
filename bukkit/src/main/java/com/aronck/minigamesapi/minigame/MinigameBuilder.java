@@ -45,6 +45,7 @@ public class MinigameBuilder{
 
     public MinigameBuilder addMinigameState(AbstractState state){
         state.minigame = minigame;
+        if(minigame.currentState==null)minigame.currentState=state;
         minigame.lastState.setNextState(state);
         minigame.lastState = state;
         return this;

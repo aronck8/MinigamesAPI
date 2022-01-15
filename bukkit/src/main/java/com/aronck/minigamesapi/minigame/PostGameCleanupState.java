@@ -2,7 +2,7 @@ package com.aronck.minigamesapi.minigame;
 
 public class PostGameCleanupState extends AbstractState{
 
-    protected PostGameCleanupState(Minigame minigame) {
+    PostGameCleanupState(Minigame minigame) {
         super(minigame, "cleanup", GamePhase.POSTGAME, true);
     }
 

@@ -10,7 +10,7 @@ import tests.Main;
 
 public class InternalInitState extends AbstractState{
 
-    public InternalInitState(Minigame minigame) {
+    InternalInitState(Minigame minigame) {
         super(minigame, "init", GamePhase.PREGAME, true);
     }
 

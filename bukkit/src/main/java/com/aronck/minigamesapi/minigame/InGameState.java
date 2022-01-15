@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 
 public class InGameState extends AbstractState{
 
-    public InGameState(Minigame minigame) {
-        super(minigame, "ingame", GamePhase.INGAME);
+    public InGameState() {
+        super("ingame", GamePhase.INGAME);
     }
 
     public InGameState(boolean startNextOnFinish) {

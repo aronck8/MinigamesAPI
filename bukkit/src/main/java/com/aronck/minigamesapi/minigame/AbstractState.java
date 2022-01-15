@@ -12,22 +12,27 @@ public abstract class AbstractState {
     protected boolean startNextStateOnFinish = true;
     protected boolean running = false;
 
-    protected AbstractState(Minigame minigame, String name, GamePhase gamePhase) {
-        this.minigame = minigame;
-        main = minigame.main;
+    protected AbstractState(String name, GamePhase gamePhase) {
         NAME = name;
         this.gamePhase = gamePhase;
     }
 
-    protected AbstractState(Minigame minigame, String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
-        this.minigame = minigame;
-        main = minigame.main;
+    protected AbstractState(String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
         NAME = name;
         this.gamePhase = gamePhase;
         this.startNextStateOnFinish = startNextStateOnFinish;
     }
 
-    protected AbstractState(String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
+    AbstractState(Minigame minigame, String name, GamePhase gamePhase) {
+        this.minigame = minigame;
+        main = minigame.main;
+        NAME = name;
+        this.gamePhase = gamePhase;
+    }
+
+    AbstractState(Minigame minigame, String name, GamePhase gamePhase, boolean startNextStateOnFinish) {
+        this.minigame = minigame;
+        main = minigame.main;
         NAME = name;
         this.gamePhase = gamePhase;
         this.startNextStateOnFinish = startNextStateOnFinish;

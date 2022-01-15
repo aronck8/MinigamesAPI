@@ -43,7 +43,7 @@ public class TeamsDataBuilder {
 		return this;
 	}
 
-	public TeamsDataBuilder addWinCondition(Conditional conditional){
+	public TeamsDataBuilder addWinCondition(Function<Team, Boolean> conditional){
 		teamsData.winConditions.add(conditional);
 		return this;
 	}
