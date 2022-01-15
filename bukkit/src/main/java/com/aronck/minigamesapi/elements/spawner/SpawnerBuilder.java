@@ -10,6 +10,8 @@ public abstract class SpawnerBuilder<S extends Spawner<T>, T> {
 
     public SpawnerBuilder(long delay, long duration){
         spawner = getNewSpawner();
+        spawner.delay = delay;
+        spawner.duration = duration;
     }
 
     public SpawnerBuilder<S, T> addLocation(Location location){

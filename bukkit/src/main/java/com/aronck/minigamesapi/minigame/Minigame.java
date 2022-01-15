@@ -39,7 +39,6 @@ public class Minigame {
 	EventsManager eventsManager;
 	TabListManager tabListManager;
 
-	List<LocationChooser> locationChoosers;
 	List<GameMap> maps;
 
 	Countdown countDown = new StandardCountdown(30);
@@ -61,7 +60,6 @@ public class Minigame {
 		lastState = nextState;
 		eventsManager = new EventsManager(main);
 		tabListManager = new TabListManager(this);
-		locationChoosers = new ArrayList<>();
 		maps = new ArrayList<>();
 
 		Minigames.addMinigame(this);
@@ -217,7 +215,7 @@ public class Minigame {
 	}
 
 	public List<LocationChooser> getLocationChoosers(){
-		return locationChoosers;
+		return currentMap.getLocationChoosers();
 	}
 
 	public ItemStack getLocationChooserItem(){
@@ -241,4 +239,7 @@ public class Minigame {
 		return ID;
 	}
 
+	public JavaPlugin getMain() {
+		return main;
+	}
 }

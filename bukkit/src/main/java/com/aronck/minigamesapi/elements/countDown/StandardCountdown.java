@@ -46,7 +46,8 @@ public class StandardCountdown extends Countdown {
     @Override
     protected void tick(Minigame minigame, int seconds) {
         for(Player player : Bukkit.getOnlinePlayers()){
-            player.sendMessage(getTickString(seconds));
+            String tickString = getTickString(seconds);
+            player.sendMessage(tickString);
             if(useXPBar)player.setLevel(seconds);
         }
     }
