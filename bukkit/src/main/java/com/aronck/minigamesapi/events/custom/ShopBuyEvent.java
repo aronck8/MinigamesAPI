@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.events.custom;
 
+import com.aronck.minigamesapi.elements.shop.ShopElement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -13,26 +14,19 @@ public class ShopBuyEvent<K, V> extends Event implements Cancellable {
 
     private Player player;
 
-    private K object;
+    private ShopElement<K, V> shopElement;
 
-    private V value;
-
-    public ShopBuyEvent(Player player, K object, V value) {
+    public ShopBuyEvent(Player player, ShopElement<K, V> shopElement) {
         this.player = player;
-        this.object = object;
-        this.value = value;
+        this.shopElement = shopElement;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public K getObject() {
-        return object;
-    }
-
-    public V getValue() {
-        return value;
+    public ShopElement<K, V> getShopElement() {
+        return shopElement;
     }
 
     @Override

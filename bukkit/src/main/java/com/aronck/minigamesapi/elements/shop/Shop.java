@@ -6,6 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  *
  * The shop class serves as the superclass for all minigame shops such as the {@link CategorizedShop}
@@ -23,6 +27,16 @@ public abstract class Shop<K, V> {
     protected int rows;
 
     /**
+     * The different products with their individual prices
+     */
+    protected List<ShopElement<K, V>> products = new ArrayList<>();
+
+    /**
+     * HashMap used to create a link between a buyable and its symbol in the menu
+     */
+    protected HashMap<ItemStack, ShopElement<K, V>> shopSymbolsForObject = new HashMap<>();
+
+    /**
      *
      * creates a new Shop object with a given name and row count
      *
@@ -35,33 +49,42 @@ public abstract class Shop<K, V> {
         Shops.addShop(name, this);
     }
 
-    /**
-     *
-     * internal method to trigger the {@link ShopBuyEvent} before calling the {@link #buy(Object, Object, Player)} method
-     *
-     * @param product
-     * @param prize
-     * @param player
-     * @return true if player is able to afford product and if the event didn't get cancelled
-     */
-    final boolean buy0(K product, V prize, Player player){
+    public Shop<K, V> addProduct(K product, V price, ItemStack itemStack){
+        addProduct(new ShopElement<>(product, price, itemStack));
+        return this;
+    }
 
-        ShopBuyEvent<K, V> buyEvent = new ShopBuyEvent<>(player, product, prize);
-        Bukkit.getPluginManager().callEvent(buyEvent);
-
-        if(buyEvent.isCancelled())return false;
-
-        return buy(product, prize, player);
+    public Shop<K, V> addProduct(ShopElement<K, V> element){
+        products.add(element);
+        shopSymbolsForObject.put(element.getItemInShopMenu(), element);
+        return this;
     }
 
     /**
      *
-     * @param product
-     * @param prize
+     * internal method to trigger the {@link ShopBuyEvent} before calling the {@link #buy(ShopElement, Player)} method
+     *
+     * @param shopElement
+     * @param player
+     * @return true if player is able to afford product and if the event didn't get cancelled
+     */
+    boolean buy0(ShopElement<K, V> shopElement, Player player){
+
+        ShopBuyEvent<K, V> buyEvent = new ShopBuyEvent<>(player, shopElement);
+        Bukkit.getPluginManager().callEvent(buyEvent);
+
+        if(buyEvent.isCancelled())return false;
+
+        return buy(shopElement, player);
+    }
+
+    /**
+     *
+     * @param shopElement
      * @param player
      * @return true if player is able to afford product
      */
-    public abstract boolean buy(K product, V prize, Player player);
+    public abstract boolean buy(ShopElement<K, V> shopElement, Player player);
 
     /**
      *

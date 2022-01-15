@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.elements.shop;
 
+import com.aronck.minigamesapi.events.custom.ShopBuyEvent;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -8,7 +9,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  *
@@ -17,7 +21,7 @@ import java.util.HashMap;
  * @param <V> the type of the currency e.g Integer for money or any object as a kind of "exchange"
  *
  */
-public class ShopCategory<K, V> {
+public class ShopCategory<K, V>{
 
     /**
      * The name of a shop category which can be used as a unique identifier
@@ -37,12 +41,12 @@ public class ShopCategory<K, V> {
     /**
      * The different products with their individual prices
      */
-    private HashMap<K, V> priceOfProduct = new HashMap<>();
+    protected List<ShopElement<K, V>> products = new ArrayList<>();
 
     /**
      * HashMap used to create a link between a buyable and its symbol in the menu
      */
-    private HashMap<ItemStack, K> shopSymbolsForObject = new HashMap<>();
+    protected HashMap<ItemStack, ShopElement<K, V>> shopSymbolsForObject = new HashMap<>();
 
     /**
      * initializes a new {@link ShopCategory} in the {@link Shop} with a specific name and default menu {@link ItemStack}
@@ -69,30 +73,21 @@ public class ShopCategory<K, V> {
         this.menuItem = menuItem;
     }
 
-    /**
-     *
-     * initializes a new {@link ShopCategory} in the {@link Shop} with a specific name, menu {@link ItemStack}, and a list of products and their prices
-     *
-     * @param name      Name of the shop category which can be used as a unique identifier
-     * @param menuItem  the item used in the menu of the {@link ShopCategory}
-     * @param products  the list of available products in the {@link ShopCategory}
-     * @param prizes    the list of the prices of the products
-     */
-    public ShopCategory(CategorizedShop<K, V> parent, String name, ItemStack menuItem, K[] products, V[] prizes){
-        this.parent = parent;
-        parent.addCategory(this);
-        this.name = name;
-        this.menuItem = menuItem;
-        for(int i = 0;i<products.length;i++){
-            if(prizes.length>i) priceOfProduct.put(products[i], prizes[i]);
-            else priceOfProduct.put(products[i], null);
-        }
+    public ShopCategory<K, V> addProduct(K product, V price, ItemStack itemStack){
+        addProduct(new ShopElement<>(product, price, itemStack));
+        return this;
+    }
+
+    public ShopCategory<K, V> addProduct(ShopElement<K, V> element){
+        products.add(element);
+        shopSymbolsForObject.put(element.getItemInShopMenu(), element);
+        return this;
     }
 
     /**
      *
      * used to set the parent container of the {@link ShopCategory} to allow it to use methods of {@link Shop}
-     * such as {@link Shop#buy(Object, Object, Player)} and {@link Shop#getItemStack(Object, Object)}
+     * such as {@link Shop#buy(ShopElement, Player)} and {@link Shop#getItemStack(Object, Object)}
      *
      * @param parent the shop in which this section is contained
      */
@@ -101,31 +96,9 @@ public class ShopCategory<K, V> {
         this.parent = parent;
     }
 
-    /**
-     *
-     * adds a new buyable item to this {@link ShopCategory}
-     *
-     * @param product       product you want to add
-     * @param price         price the user has to give away in exchange of the product
-     * @return
-     */
-    public ShopCategory<K, V> addProduct(K product, V price){
-        priceOfProduct.put(product, price);
-        shopSymbolsForObject.put(parent.getItemStack(product, price), product);
-        return this;
+    public boolean buy(ShopElement<K, V> shopElement, Player player){
+        return parent.buy(shopElement, player);
     }
-
-    /**
-     *
-     * returns the object one has to pay for a given object in the shop
-     *
-     * @param product the product from which we want to now the price
-     * @return the specific price of a product
-     */
-    public Object getPrizeOfProduct(K product){
-        return priceOfProduct.get(product);
-    }
-
 
     /**
      * returns the name of the shop, which is used as a unique identifier
@@ -151,16 +124,33 @@ public class ShopCategory<K, V> {
      * @param e the {@link InventoryClickEvent} that has to be processed
      */
     public void handleItemClick(InventoryClickEvent e){
-
         ItemStack item = e.getCurrentItem();
         if(item==null || item.getType()==null || Material.AIR.equals(item.getType()))return;
 
         //transforming the clicked item(shopItem) to the actual buyable item
-        K itemInShop = shopSymbolsForObject.get(item);
-        if(!priceOfProduct.containsKey(itemInShop))return;
+        ShopElement<K, V> itemInShop = shopSymbolsForObject.get(item);
+        if(!products.contains(itemInShop))return;
 
-        parent.buy0(itemInShop, priceOfProduct.get(itemInShop), (Player) e.getWhoClicked());
+        buy0(itemInShop, (Player) e.getWhoClicked());
         e.setCancelled(true);
+    }
+
+    /**
+     *
+     * internal method to trigger the {@link ShopBuyEvent} before calling the {@link #buy(ShopElement, Player)} method
+     *
+     * @param shopElement
+     * @param player
+     * @return true if player is able to afford product and if the event didn't get cancelled
+     */
+    boolean buy0(ShopElement<K, V> shopElement, Player player){
+
+        ShopBuyEvent<K, V> buyEvent = new ShopBuyEvent<>(player, shopElement);
+        Bukkit.getPluginManager().callEvent(buyEvent);
+
+        if(buyEvent.isCancelled())return false;
+
+        return buy(shopElement, player);
     }
 
 
@@ -170,15 +160,13 @@ public class ShopCategory<K, V> {
      * @return the created {@link Inventory}
      */
     public Inventory toInventory(){
-        Inventory inv = Bukkit.createInventory(null, PluginUtils.convertToMultiplesOfBase(priceOfProduct.size(), 9), name);
+        Inventory inv = Bukkit.createInventory(null, PluginUtils.convertToMultiplesOfBase(products.size(), 9), name);
 
         int index = 0;
-        for(K key : priceOfProduct.keySet()){
-            inv.setItem(index++, parent.getItemStack(key, priceOfProduct.get(key)));
+        for(ShopElement<K, V> product : products){
+            inv.setItem(index++, product.getItemInShopMenu());
         }
-
         return inv;
-
     }
 
 }

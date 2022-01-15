@@ -13,12 +13,20 @@ public abstract class CategorizedShop<K, V> extends Shop<K, V>{
 
     private List<ShopCategory<K, V>> categories = new ArrayList<>();
 
+    private boolean canContainCategoryTwice = false;
+
     public CategorizedShop(String name, int rows) {
         super(name, rows);
     }
 
+    public CategorizedShop(String name, int rows, boolean canContainCategoryTwice) {
+        super(name, rows);
+        this.canContainCategoryTwice = canContainCategoryTwice;
+    }
+
     public void addCategory(ShopCategory<K, V> shopCategory){
         shopCategory.setParent(this);
+        if(!canContainCategoryTwice && categories.contains(shopCategory))return;
         categories.add(shopCategory);
     }
 

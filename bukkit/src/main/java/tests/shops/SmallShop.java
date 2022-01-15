@@ -2,6 +2,7 @@ package tests.shops;
 
 import com.aronck.minigamesapi.elements.shop.CategorizedShop;
 import com.aronck.minigamesapi.elements.shop.ShopCategory;
+import com.aronck.minigamesapi.elements.shop.ShopElement;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,14 +32,7 @@ public class SmallShop extends CategorizedShop<ItemStack, ItemStack> {
     }
 
     @Override
-    public boolean buy(ItemStack product, ItemStack prize, Player player) {
-        if(!player.getInventory().containsAtLeast(prize, 1)){
-            player.sendMessage("§cDu hast nicht genügend Materialien dazu!");
-            return false;
-        }
-        player.getInventory().removeItem(prize);
-        player.getInventory().addItem(product);
-        player.updateInventory();
+    public boolean buy(ShopElement<ItemStack, ItemStack> shopElement, Player player) {
 
         return true;
     }
