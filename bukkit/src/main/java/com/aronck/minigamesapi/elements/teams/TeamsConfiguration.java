@@ -119,7 +119,7 @@ public class TeamsConfiguration {
 		for (Team team : teams) {
 			if(hasGameStarted&&!team.getData().canJoinTeamAfterStart())continue;
 			//check which team has less players(in percentage)
-			if (team.getNumberOfFreeSlots()/team.getMaxPlayers() > maxPeopleLeftTeam.getNumberOfFreeSlots()/team.getMaxPlayers()){
+			if ((double)team.getNumberOfFreeSlots()/team.getMaxPlayers() > (double)maxPeopleLeftTeam.getNumberOfFreeSlots()/team.getMaxPlayers()){
 				maxPeopleLeftTeam = team;
 			}
 		}

@@ -3,6 +3,7 @@ package com.aronck.minigamesapi.elements.teams;
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
 import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

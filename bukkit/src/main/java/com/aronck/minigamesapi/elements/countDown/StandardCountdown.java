@@ -34,7 +34,7 @@ public class StandardCountdown extends Countdown {
     private String getTickString(int duration){
         int minutes = duration/60;
         int seconds = duration%60;
-        countdownStringBuffer.append("§aDas Spiel startet in ");
+        countdownStringBuffer.append(prefix + "§aDas Spiel startet in ");
         if(minutes!=0) countdownStringBuffer.append("§c").append(minutes).append(" §aMinuten ");
         if(minutes!=0 && seconds!=0)countdownStringBuffer.append("§aund ");
         if(seconds!=0) countdownStringBuffer.append("§c").append(seconds).append(" §aSekunde(n)");
@@ -56,8 +56,10 @@ public class StandardCountdown extends Countdown {
     protected void firstTick(Minigame minigame, int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDer Countdown wurde gestartet!");
-            player.setLevel(duration);
-            player.setExp(0);
+            if(useXPBar) {
+                player.setLevel(duration);
+                player.setExp(0);
+            }
         }
     }
 
@@ -65,8 +67,10 @@ public class StandardCountdown extends Countdown {
     protected void lastTick(Minigame minigame, int duration) {
         for(Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage("§aDas Spiel startet jetzt!");
-            player.setLevel(0);
-            player.setExp(0);
+            if(useXPBar) {
+                player.setLevel(0);
+                player.setExp(0);
+            }
         }
 
         minigame.startNextState();
