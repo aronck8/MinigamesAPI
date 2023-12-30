@@ -50,9 +50,11 @@ public class LocationChooserCommand implements CommandExecutor {
             }
 
             player.sendMessage("Es konnte keine Location mit dem Namen gefunden werden. ");
-            player.sendMessage("Die registrierten Positionen sind: " + Arrays.toString(locationKeys.toArray()) + "!");
-
+            player.sendMessage("Die registrierten(und somit setzbaren) Positionen sind: " + Arrays.toString(locationKeys.toArray()) + "!");
+            return true;
         }
+
+
 
         return false;
     }
