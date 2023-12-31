@@ -138,7 +138,6 @@ public class Minigame {
 				boolean won = team.getData().getWinConditions().stream().allMatch(t -> t.apply(team));
 
 				if(won){
-
 					GameOverEvent gameOverEvent = new GameOverEvent(this, team);
 					Bukkit.getPluginManager().callEvent(gameOverEvent);
 					if(!gameOverEvent.isCancelled()){
@@ -153,32 +152,30 @@ public class Minigame {
 
 	public void startNextState(){
 
+		nextState = currentState.nextState;
 		if (nextState == null) {
 			System.out.println("No state");
+			//if the last state is reached, stop the minigame
+			stopMinigame();
 			return;
-		} else {
-			System.out.println("currentState: " + nextState.NAME);
 		}
+
+		System.out.println("currentState: " + currentState.NAME);
 
 		//if a state is currently running, stop it before starting further states
 		if(currentState!=null && currentState.isRunning()) {
 			currentState.stop();
 		}
-		//if the last state is reached, stop the minigame
-		if(nextState==null){
-			return;
-		}
 
 		currentState = nextState;
-		nextState = currentState.nextState;
 		currentState.start();
 	}
 
 	public void stopMinigame(){
-		if(currentState!=lastState){
-			currentState.stop();
-			cleanUpState.start();
-		}
+		if(currentState==cleanUpState)return;
+		currentState.setNextState(cleanUpState);
+		currentState.startNextStateOnFinish=true;
+		currentState.stop();
 	}
 
 	void preInitGameStates(){
