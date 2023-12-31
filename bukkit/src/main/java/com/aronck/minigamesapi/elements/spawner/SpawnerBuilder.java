@@ -19,7 +19,7 @@ public abstract class SpawnerBuilder<S extends Spawner<T>, T> {
         return this;
     }
 
-    public SpawnerBuilder<S, T> addLoactions(Location... locations){
+    public SpawnerBuilder<S, T> addLocations(Location... locations){
         spawner.locations.addAll(Arrays.asList(locations));
         return this;
     }
