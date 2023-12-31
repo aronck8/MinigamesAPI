@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SpawnerManager {
 
-    private ArrayList<Spawner> spawners = new ArrayList<>();
+    private ArrayList<Spawner<?>> spawners = new ArrayList<>();
 
     public void startSpawners(){
         spawners.forEach(Spawner::start);
@@ -14,15 +14,15 @@ public class SpawnerManager {
         spawners.forEach(Spawner::stop);
     }
 
-    public ArrayList<Spawner> getSpawners(){
+    public ArrayList<Spawner<?>> getSpawners(){
         return spawners;
     }
 
-    public Spawner get(int index) {
+    public Spawner<?> get(int index) {
         return spawners.get(index);
     }
 
-    public boolean add(Spawner spawner) {
+    public boolean add(Spawner<?> spawner) {
         return spawners.add(spawner);
     }
 
