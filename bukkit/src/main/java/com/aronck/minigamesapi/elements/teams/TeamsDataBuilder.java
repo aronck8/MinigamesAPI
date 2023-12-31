@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.elements.teams;
 
+import com.aronck.minigamesapi.elements.map.GameMap;
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
 import com.aronck.minigamesapi.minigame.Minigame;
 import org.bukkit.DyeColor;
@@ -7,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TeamsDataBuilder {
@@ -28,7 +30,7 @@ public class TeamsDataBuilder {
 		return this;
 	}
 
-	public TeamsDataBuilder addRespawnCondition(Conditional condition){
+	public TeamsDataBuilder addRespawnCondition(Function<Team, Boolean> condition){
 		teamsData.respawnConditions.add(condition);
 		return this;
 	}
@@ -43,7 +45,7 @@ public class TeamsDataBuilder {
 		return this;
 	}
 
-	public TeamsDataBuilder addWinCondition(Function<Team, Boolean> conditional){
+	public TeamsDataBuilder addWinCondition(BiFunction<GameMap, Team, Boolean> conditional){
 		teamsData.winConditions.add(conditional);
 		return this;
 	}

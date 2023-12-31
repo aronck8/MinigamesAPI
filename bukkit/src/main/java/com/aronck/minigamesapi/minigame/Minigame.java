@@ -135,7 +135,7 @@ public class Minigame {
 		if(getTeamsConfiguration()!=null) {
 			for (Team team : getTeamsConfiguration().getTeams()) {
 
-				boolean won = team.getData().getWinConditions().stream().allMatch(t -> t.apply(team));
+				boolean won = team.getData().getWinConditions().stream().allMatch(t -> t.apply(currentMap, team));
 
 				if(won){
 					GameOverEvent gameOverEvent = new GameOverEvent(this, team);

@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Team {
 
@@ -100,8 +101,8 @@ public class Team {
      * @return true if all of the {@link Conditional} respawn conditions evaluate to true
      */
     public boolean canRespawn(){
-        for (Conditional c : data.getRespawnConditions()){
-            if (!c.evaluate())return false;
+        for (Function<Team, Boolean> f : data.getRespawnConditions()){
+            if (!f.apply(this))return false;
         }
         return true;
     }

@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.elements.teams;
 
+import com.aronck.minigamesapi.elements.map.GameMap;
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
 import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -20,10 +22,10 @@ public class TeamsData {
 	String name;
 	DyeColor teamColor;
 
-	List<Conditional> respawnConditions;
+	List<Function<Team, Boolean>> respawnConditions;
 	List<Location> respawnLocations;
 	List<Kit> kits;
-	List<Function<Team, Boolean>> winConditions;
+	List<BiFunction<GameMap, Team, Boolean>> winConditions;
 	BiConsumer<Minigame, Team> initMethod;
 	Function<Team, ItemStack> createItemStack = team -> PluginUtils.getItem(Material.BED, 1,
 			"Team: " + team.getData().getName(),
@@ -49,7 +51,7 @@ public class TeamsData {
 		return createItemStack.apply(team);
 	}
 
-	public List<Conditional> getRespawnConditions() {
+	public List<Function<Team, Boolean>> getRespawnConditions() {
 		return respawnConditions;
 	}
 
@@ -71,7 +73,7 @@ public class TeamsData {
 		return kits.get(PluginUtils.getRandomInt(kits.size()-1));
 	}
 
-	public List<Function<Team, Boolean>> getWinConditions() {
+	public List<BiFunction<GameMap, Team, Boolean>> getWinConditions() {
 		return winConditions;
 	}
 
