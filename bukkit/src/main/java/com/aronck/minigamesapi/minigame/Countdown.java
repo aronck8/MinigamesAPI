@@ -8,11 +8,11 @@ public abstract class Countdown {
     protected Minigame minigame;
     private boolean started = false;
     protected long timerStep;
-    protected int taskId;
+    protected int taskId = 0;
 
-    protected int duration = 0;
+    protected int duration;
     private static final int STANDARD_DURATION = 30;
-    protected int currentContdownTime = 0;
+    protected int currentContdownTime;
 
     public Countdown(long timerStep, int duration) {
         this.timerStep = timerStep;

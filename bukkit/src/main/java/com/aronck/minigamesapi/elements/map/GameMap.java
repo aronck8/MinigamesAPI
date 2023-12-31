@@ -1,10 +1,12 @@
 package com.aronck.minigamesapi.elements.map;
 
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
+import com.aronck.minigamesapi.elements.locations.Locations;
 import com.aronck.minigamesapi.elements.spawner.SpawnerManager;
 import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -100,6 +102,14 @@ public class GameMap {
 
     public List<Conditional> getStartConditions() {
         return startConditions;
+    }
+
+    public Location getMapSpecificLocation(String key){
+        return Locations.getBukkitLocation(name + "-" + key);
+    }
+
+    public Location getTeamSpecificLocation(String key, int teamId){
+        return Locations.getBukkitLocation(name + "-" + key + "-" + teamsConfiguration.getTeams().get(teamId));
     }
 
     public World getWorld() {

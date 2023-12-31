@@ -4,12 +4,14 @@ import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.elements.locations.ChooserType;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Wool;
 
 import java.util.Arrays;
 import java.util.List;
@@ -114,6 +116,11 @@ public final class PluginUtils {
 		meta.setLore(Arrays.asList(lore));
 		item.setItemMeta(meta);
 		return item;
+	}
+
+	public static ItemStack getDyedWool(DyeColor color, int amount, String name, String... lore){
+		ItemStack item = new Wool(color).toItemStack();
+		return getItem(item, amount, name, lore);
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.elements.locations;
 
+import com.aronck.minigamesapi.elements.map.GameMap;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

@@ -8,7 +8,7 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import tests.Main;
 
-public class InternalInitState extends AbstractState{
+final class InternalInitState extends AbstractState{
 
     InternalInitState(Minigame minigame) {
         super(minigame, "init", GamePhase.PREGAME, true);
