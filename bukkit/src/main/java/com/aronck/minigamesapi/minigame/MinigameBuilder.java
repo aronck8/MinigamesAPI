@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.minigame;
 
+import com.aronck.minigamesapi.Main;
 import com.aronck.minigamesapi.elements.map.GameMap;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +35,7 @@ public class MinigameBuilder{
     }
 
     public MinigameBuilder setTeamsChooserItem(ItemStack item) {
-        minigame.locationChooserItem = item;
+        minigame.teamChooserItem = item;
         return this;
     }
 

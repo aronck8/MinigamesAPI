@@ -9,6 +9,7 @@ import com.aronck.minigamesapi.elements.teams.Conditional;
 import com.aronck.minigamesapi.elements.teams.Team;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.events.custom.GameOverEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,7 +23,8 @@ public class Minigame {
 
 	private final int ID;
 	private final String NAME;
-	private final int STANDART_COUNTDOWN_TIME = 5;
+	private final int STANDART_COUNTDOWN_TIME = 30;
+
 	AbstractState firstState;
 	AbstractState currentState;
 	AbstractState nextState;
@@ -41,7 +43,7 @@ public class Minigame {
 
 	List<GameMap> maps;
 
-	Countdown countDown = new StandardCountdown(30);
+	Countdown countDown = new StandardCountdown(STANDART_COUNTDOWN_TIME);
 
 	private int taskId;
 
@@ -67,7 +69,7 @@ public class Minigame {
 
 	public void start(){
 		currentState = firstState;
-		startNextState();
+		currentState.start();
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class Minigame {
 
 		boolean canStart = currentMap.getStartConditions().stream().allMatch(Conditional::evaluate);
 		if(canStart){
-			startCountdown(STANDART_COUNTDOWN_TIME);
+			startCountdown();
 		}
 
 	}
@@ -116,7 +118,6 @@ public class Minigame {
 	 * @see #checkConditionsAndStartGame()
 	 */
 	public void startCountdown(int time) {
-		System.out.println("countdown wurde gestartet!");
 		Bukkit.getScheduler().cancelTask(taskId);
 		countDown.start(this, time);
 	}
@@ -154,13 +155,11 @@ public class Minigame {
 
 		nextState = currentState.nextState;
 		if (nextState == null) {
-			System.out.println("No state");
 			//if the last state is reached, stop the minigame
 			stopMinigame();
 			return;
 		}
 
-		System.out.println("currentState: " + currentState.NAME);
 
 		//if a state is currently running, stop it before starting further states
 		if(currentState!=null && currentState.isRunning()) {
@@ -172,6 +171,7 @@ public class Minigame {
 	}
 
 	public void stopMinigame(){
+		//check if the currentstate is the cleanupstate so it isn't being stopped
 		if(currentState==cleanUpState)return;
 		currentState.setNextState(cleanUpState);
 		currentState.startNextStateOnFinish=true;
@@ -189,6 +189,10 @@ public class Minigame {
 	public boolean isIngamePhase(){
 		if(currentState==null)return false;
 		return GamePhase.INGAME.equals(currentState.gamePhase);
+	}
+
+	public String getName() {
+		return NAME;
 	}
 
 	public AbstractState getCurrentState(){

@@ -3,7 +3,9 @@ package com.aronck.minigamesapi.minigame;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public final class Minigames {
 
@@ -28,6 +30,10 @@ public final class Minigames {
 
     public static Minigame get(int index) {
         return minigames.get(index);
+    }
+
+    public static List<Minigame> getMinigames() {
+        return Collections.unmodifiableList(minigames);
     }
 
     public static void selectMinigame(Player player, Minigame minigame){

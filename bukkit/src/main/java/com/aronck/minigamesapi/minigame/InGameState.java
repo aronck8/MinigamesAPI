@@ -24,7 +24,6 @@ public class InGameState extends AbstractState{
         MinigameStartEvent minigameStartEvent = new MinigameStartEvent(minigame);
         Bukkit.getPluginManager().callEvent(minigameStartEvent);
         if(!minigameStartEvent.isCancelled())minigame.startMiniGame();
-        System.out.println("starting Minigame");
         //teleport players to their start position
         if(minigame.currentMap!=null) {
             minigame.getCurrentMap().initOnMinigameStart();
