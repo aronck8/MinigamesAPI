@@ -3,7 +3,7 @@ package com.aronck.minigamesapi.elements.spawner;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import tests.Main;
+import com.aronck.minigamesapi.Main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public abstract class Spawner<T> {
     protected void spawn(){
         for(Location location : locations) {
             if (location == null) continue;
-            if (!canNewObjectSpawn(location)) return;
+             if (!canNewObjectSpawn(location)) continue;
             for(Map.Entry<T, Integer> entry : spawnableElements.entrySet()){
                 int randomInt = PluginUtils.getRandomInt(100);
                 if(randomInt < entry.getValue()){
