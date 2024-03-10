@@ -1,6 +1,6 @@
 package com.aronck.minigamesapi.elements.locations;
 
-import com.aronck.minigamesapi.utils.Config;
+import com.aronck.minigamesapi.utils.config.LocationsConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +13,12 @@ public final class Locations {
 
 	public static void saveLocation(String key, org.bukkit.Location location){
 		cache.put(key, new Location(key, location));
-		Config.saveLocation(cache.get(key));
+		LocationsConfig.saveLocation(cache.get(key));
 	}
 
 	public static Location getLocation(String key){
 		if(cache.get(key)!=null)return cache.get(key);
-		Location location = Config.getLocation(key);
+		Location location = LocationsConfig.getLocation(key);
 		if(location!=null) cache.put(key, location);
 		return location;
 	}
@@ -43,7 +43,7 @@ public final class Locations {
 
 	public static boolean isSet(String key){
 		if(cache.get(key)!=null)return true;
-		cache.put(key, Config.getLocation(key));
+		cache.put(key, LocationsConfig.getLocation(key));
 		return cache.get(key)!=null;
 	}
 
@@ -52,6 +52,10 @@ public final class Locations {
 			if(!isSet(key))return false;
 		}
 		return true;
+	}
+
+	public static void clearCache(){
+		cache.clear();
 	}
 
 }

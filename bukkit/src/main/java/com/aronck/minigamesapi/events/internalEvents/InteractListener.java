@@ -1,5 +1,6 @@
 package com.aronck.minigamesapi.events.internalEvents;
 
+import com.aronck.minigamesapi.elements.teams.TeamChooserType;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.utils.PluginUtils;
@@ -8,11 +9,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public final class InteractEvent implements Listener {
+public final class InteractListener implements Listener {
 
 	private Minigame minigame;
 
-	public InteractEvent(Minigame minigame){
+	public InteractListener(Minigame minigame){
 		this.minigame = minigame;
 	}
 
@@ -25,7 +26,7 @@ public final class InteractEvent implements Listener {
 				PluginUtils.openLocationChooserInventory(minigame, e.getPlayer());
 			}else if(minigame.getTeamChooserItem().equals(e.getItem())){
 				TeamsConfiguration configuration = minigame.getTeamsConfiguration();
-				if(configuration!=null){
+				if(configuration!=null && !configuration.getType().equals(TeamChooserType.AUTOMATIC)){
 					configuration.openTeamsChooserInventory(e.getPlayer());
 					//configuration.positionPlayerInTeamWithPreference(e.getPlayer(), configuration.getTeamFromItem(e.getItem()), minigame.isIngamePhase());
 				}

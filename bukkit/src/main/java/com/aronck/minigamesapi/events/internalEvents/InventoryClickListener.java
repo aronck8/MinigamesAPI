@@ -6,19 +6,18 @@ import com.aronck.minigamesapi.minigame.Minigame;
 import com.aronck.minigamesapi.elements.locations.Location;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import com.aronck.minigamesapi.elements.shop.Shops;
-import com.aronck.minigamesapi.utils.Config;
+import com.aronck.minigamesapi.utils.config.LocationsConfig;
 import com.aronck.minigamesapi.utils.PluginConstants;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public final class InventoryClick implements Listener {
+public final class InventoryClickListener implements Listener {
 
 	private Minigame minigame;
 
-	public InventoryClick(Minigame minigame){
+	public InventoryClickListener(Minigame minigame){
 		this.minigame = minigame;
 	}
 
@@ -33,7 +32,7 @@ public final class InventoryClick implements Listener {
 			for(LocationChooser chooser : minigame.getLocationChoosers()){
 				if(!chooser.getItem().equals(e.getCurrentItem()))continue;
 				player.sendMessage("Die Position für: \"" + chooser.getKey() + "\" wurde gesetzt!");
-				Config.saveLocation(new Location(chooser.getKey(), player.getLocation()));
+				LocationsConfig.saveLocation(new Location(chooser.getKey(), player.getLocation()));
 			}
 		}else if(title.equals(PluginConstants.TEAM_CHOOSER_INVENTORY_NAME)){
 			e.setCancelled(true);
@@ -57,6 +56,8 @@ public final class InventoryClick implements Listener {
 
 			player.sendMessage("§eDu wurdest dem Team erfolgreich hinzugefügt");
 			teamsConfiguration.addPlayerToTeam(player, team, minigame.isIngamePhase());
+
+			//reopen the inventory to update items that may have changed
 			teamsConfiguration.openTeamsChooserInventory(player);
 
 		}

@@ -1,4 +1,4 @@
-package com.aronck.minigamesapi.utils;
+package com.aronck.minigamesapi.utils.config;
 
 import com.aronck.minigamesapi.elements.locations.Location;
 import org.bukkit.Bukkit;
@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public final class Config {
+public final class LocationsConfig {
 
 	private static File configFile = new File("plugins/minigamesAPI/data.yml");
 	private static FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);

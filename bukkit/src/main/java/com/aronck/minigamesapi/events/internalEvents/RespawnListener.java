@@ -6,11 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-public class RespawnEvent implements Listener {
+public class RespawnListener implements Listener {
 
     private Minigame minigame;
 
-    public RespawnEvent(Minigame minigame) {
+    public RespawnListener(Minigame minigame) {
         this.minigame = minigame;
     }
 

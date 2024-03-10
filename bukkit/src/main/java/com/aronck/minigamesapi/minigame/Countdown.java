@@ -1,7 +1,10 @@
 package com.aronck.minigamesapi.minigame;
 
 import org.bukkit.Bukkit;
-import tests.Main;
+import com.aronck.minigamesapi.Main;
+
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Countdown {
 
