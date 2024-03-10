@@ -23,6 +23,10 @@ public final class Main extends JavaPlugin {
 		return instance;
 	}
 
+	public InternalDataBridgeKey getKey() throws IllegalAccessException {
+		return new InternalDataBridgeKey(this);
+	}
+
 	public FeedbackHandler getFeedbackHandler(){
 		return feedbackHandler;
 	}
