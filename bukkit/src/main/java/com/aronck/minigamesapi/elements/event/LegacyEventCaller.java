@@ -419,11 +419,6 @@ public class LegacyEventCaller implements Listener {
     }
 
     @EventHandler
-    public void onPlayerAchievementAwardedEvent(PlayerAchievementAwardedEvent e){
-        callEvents(e);
-    }
-
-    @EventHandler
     public void onPlayerAnimationEvent(PlayerAnimationEvent e){
         callEvents(e);
     }

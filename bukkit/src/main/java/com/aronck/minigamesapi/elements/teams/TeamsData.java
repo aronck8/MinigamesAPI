@@ -27,7 +27,7 @@ public class TeamsData {
 	List<Kit> kits;
 	List<BiFunction<GameMap, Team, Boolean>> winConditions;
 	BiConsumer<Minigame, Team> initMethod;
-	Function<Team, ItemStack> createItemStack = team -> PluginUtils.getItem(Material.BED, 1,
+	Function<Team, ItemStack> createItemStack = team -> PluginUtils.getItem(Material.RED_BED, 1,
 			"Team: " + team.getData().getName(),
 			team.getNumberOfUsedSlots() + "/" + team.getMaxPlayers());
 	boolean canJoinTeamAfterStart = false;
