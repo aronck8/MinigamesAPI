@@ -23,4 +23,12 @@ public final class Main extends JavaPlugin {
 		return instance;
 	}
 
+	public FeedbackHandler getFeedbackHandler(){
+		return feedbackHandler;
+	}
+
+	public void setFeedbackHandler(FeedbackHandler feedbackHandler) {
+		this.feedbackHandler = feedbackHandler;
+	}
+
 }
