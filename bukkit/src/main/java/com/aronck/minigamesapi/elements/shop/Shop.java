@@ -4,6 +4,7 @@ import com.aronck.minigamesapi.events.custom.ShopBuyEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -27,21 +28,11 @@ public abstract class Shop<K, V> {
     protected int rows;
 
     /**
-     * The different products with their individual prices
-     */
-    protected List<ShopElement<K, V>> products = new ArrayList<>();
-
-    /**
-     * HashMap used to create a link between a buyable and its symbol in the menu
-     */
-    protected HashMap<ItemStack, ShopElement<K, V>> shopSymbolsForObject = new HashMap<>();
-
-    /**
      *
      * creates a new Shop object with a given name and row count
      *
-     * @param name
-     * @param rows
+     * @param name the name of the shop
+     * @param rows the amount of rows the shop has
      */
     public Shop(String name, int rows) {
         this.name = name;
@@ -49,23 +40,12 @@ public abstract class Shop<K, V> {
         Shops.addShop(name, this);
     }
 
-    public Shop<K, V> addProduct(K product, V price, ItemStack itemStack){
-        addProduct(new ShopElement<>(product, price, itemStack));
-        return this;
-    }
-
-    public Shop<K, V> addProduct(ShopElement<K, V> element){
-        products.add(element);
-        shopSymbolsForObject.put(element.getItemInShopMenu(), element);
-        return this;
-    }
-
     /**
      *
      * internal method to trigger the {@link ShopBuyEvent} before calling the {@link #buy(ShopElement, Player)} method
      *
-     * @param shopElement
-     * @param player
+     * @param shopElement {@link ShopElement} that got bought
+     * @param player the player that bought the {@link ShopElement}
      * @return true if player is able to afford product and if the event didn't get cancelled
      */
     boolean buy0(ShopElement<K, V> shopElement, Player player){
@@ -80,19 +60,24 @@ public abstract class Shop<K, V> {
 
     /**
      *
-     * @param shopElement
-     * @param player
+     * @param shopElement {@link ShopElement} that got bought
+     * @param player the player that bought the {@link ShopElement}
      * @return true if player is able to afford product
      */
     public abstract boolean buy(ShopElement<K, V> shopElement, Player player);
+
+
+    public abstract Inventory generateShopInventory();
 
     /**
      *
      * opens the shop menu
      *
-     * @param player
+     * @param player the player for which the shop inventory should get opened
      */
-    public abstract void openShop(Player player);
+    public void openShop(Player player){
+        player.openInventory(generateShopInventory());
+    }
 
     /**
      * handles item clicks such as buying items or changing the submenu
@@ -101,6 +86,21 @@ public abstract class Shop<K, V> {
      */
     public abstract void handleItemClicked(InventoryClickEvent event);
 
-    public abstract ItemStack getItemStack(K key, V value);
+    /**
+     *
+     * Generates the item representation for the shop element.
+     * Takes by default the ItemStacks defined in the ShopElement instance.
+     * This method can be overriden to add shop-specific changes to the items e.g. to add the shop name to every Itemstack
+     * or to apply the same pattern to every element in the shop
+     *
+     * @param element the element for which we want to generate the item to show in the shop inventory
+     * @return the item that gets shown in the shop inventory
+     *
+     */
+    public ItemStack getItemStack(ShopElement<K, V> element){
+        return element.getItemInShopMenu();
+    }
+
+    public abstract ShopElement<K, V> getClickedElement(ItemStack itemStack);
 
 }

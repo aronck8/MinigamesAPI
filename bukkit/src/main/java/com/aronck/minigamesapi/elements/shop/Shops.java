@@ -22,8 +22,8 @@ public final class Shops {
      *
      * registers a new shop
      *
-     * @param shopName
-     * @param shop
+     * @param shopName the name of the shop
+     * @param shop the shop that gets added
      */
     public static void addShop(String shopName, Shop<?, ?> shop){
         shops.put(shopName, shop);
@@ -32,7 +32,7 @@ public final class Shops {
     /**
      *
      *searches for a Shop with the given name
-     * @param name
+     * @param name the name of that shop that gets searched for
      * @return the shop with the given name
      */
     public static Shop<?, ?> getShopByName(String name){
@@ -58,8 +58,8 @@ public final class Shops {
                     .stream()
                     .filter(shop -> shop instanceof CategorizedShop) //take only the categorized shops
                     .map(shop -> (CategorizedShop<?, ?>) shop) //cast the shops to categorized shops
-                    .flatMap(categorizedShop -> categorizedShop.getCategories().stream())
-                    .filter(o -> title.equals(o.getName())) //check if the name is the same as the clickedInventory title
+                    .flatMap(categorizedShop -> categorizedShop.getImmutableCategoriesList().stream())
+                    .filter(o -> o!=null && title.equals(o.getName())) //check if the name is the same as the clickedInventory title
                     .findFirst()
                     .ifPresent(o -> o.handleItemClick(e));
         }

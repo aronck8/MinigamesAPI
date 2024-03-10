@@ -44,17 +44,10 @@ public class ShopCategory<K, V>{
     protected List<ShopElement<K, V>> products = new ArrayList<>();
 
     /**
-     * HashMap used to create a link between a buyable and its symbol in the menu
-     */
-    protected HashMap<ItemStack, ShopElement<K, V>> shopSymbolsForObject = new HashMap<>();
-
-    /**
      * initializes a new {@link ShopCategory} in the {@link Shop} with a specific name and default menu {@link ItemStack}
      * @param name Name of the shop category which can be used as a unique identifier
      */
-    public ShopCategory(CategorizedShop<K, V> parent, String name) {
-        this.parent = parent;
-        parent.addCategory(this);
+    public ShopCategory(String name) {
         this.name = name;
         this.menuItem = PluginUtils.getItem(Material.STONE, name);
     }
@@ -66,9 +59,7 @@ public class ShopCategory<K, V>{
      * @param name      Name of the shop category which can be used as a unique identifier
      * @param menuItem  the item used in the menu of the {@link ShopCategory}
      */
-    public ShopCategory(CategorizedShop<K, V> parent, String name, ItemStack menuItem) {
-        this.parent = parent;
-        parent.addCategory(this);
+    public ShopCategory(String name, ItemStack menuItem) {
         this.name = name;
         this.menuItem = menuItem;
     }
@@ -80,18 +71,21 @@ public class ShopCategory<K, V>{
 
     public ShopCategory<K, V> addProduct(ShopElement<K, V> element){
         products.add(element);
-        shopSymbolsForObject.put(element.getItemInShopMenu(), element);
+        return this;
+    }
+
+    public ShopCategory<K, V> addProducts(List<ShopElement<K, V>> elements){
+        elements.forEach(this::addProduct);
         return this;
     }
 
     /**
      *
      * used to set the parent container of the {@link ShopCategory} to allow it to use methods of {@link Shop}
-     * such as {@link Shop#buy(ShopElement, Player)} and {@link Shop#getItemStack(Object, Object)}
+     * such as {@link Shop#buy(ShopElement, Player)} and {@link Shop#getItemStack(ShopElement)}
      *
      * @param parent the shop in which this section is contained
      */
-    @Deprecated
     final void setParent(CategorizedShop<K, V> parent) {
         this.parent = parent;
     }
@@ -126,9 +120,10 @@ public class ShopCategory<K, V>{
     public void handleItemClick(InventoryClickEvent e){
         e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
-        if(item==null)return;
+        if(item==null || item.getType().equals(Material.AIR))return;
+
         //transforming the clicked item(shopItem) to the actual buyable item
-        ShopElement<K, V> itemInShop = shopSymbolsForObject.get(item);
+        ShopElement<K, V> itemInShop = parent.getClickedElement(item);
         if(!products.contains(itemInShop))return;
 
         buy0(itemInShop, (Player) e.getWhoClicked());
@@ -138,8 +133,8 @@ public class ShopCategory<K, V>{
      *
      * internal method to trigger the {@link ShopBuyEvent} before calling the {@link #buy(ShopElement, Player)} method
      *
-     * @param shopElement
-     * @param player
+     * @param shopElement {@link ShopElement} that got bought
+     * @param player the player that bought the {@link ShopElement}
      * @return true if player is able to afford product and if the event didn't get cancelled
      */
     boolean buy0(ShopElement<K, V> shopElement, Player player){
@@ -163,7 +158,7 @@ public class ShopCategory<K, V>{
 
         int index = 0;
         for(ShopElement<K, V> product : products){
-            inv.setItem(index++, product.getItemInShopMenu());
+            inv.setItem(index++, parent.getItemStack(product));
         }
         return inv;
     }
