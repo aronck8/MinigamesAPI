@@ -16,11 +16,13 @@ public abstract class Countdown {
     protected int duration;
     private static final int STANDARD_DURATION = 30;
     protected int currentContdownTime;
+    protected List<Integer> specialTimeStamps;
 
-    public Countdown(long timerStep, int duration) {
+    public Countdown(long timerStep, int duration, Integer... specialTimeStamps) {
         this.timerStep = timerStep;
         this.duration = duration;
         currentContdownTime = duration;
+        this.specialTimeStamps = Arrays.asList(specialTimeStamps);
     }
 
     public void start(Minigame minigame){
@@ -37,6 +39,8 @@ public abstract class Countdown {
             @Override
             public void run() {
 
+                if(current<0)stop();
+                if(isSpecial(current))specialTick(current);
                 if(current>=1)tick(minigame, current);
                 else if(current==0) lastTick(minigame, duration);
                 else stop();
@@ -46,13 +50,23 @@ public abstract class Countdown {
         }, 0, timerStep);
     }
 
+    private boolean isSpecial(int numberOfStep){
+        return specialTimeStamps.contains(numberOfStep);
+    }
+
     protected void firstTick(Minigame minigame, int duration){}
 
     protected abstract void tick(Minigame minigame, int numberOfStep);
 
+    protected void specialTick(int numberOfStep){}
+
     protected void lastTick(Minigame minigame, int duration){}
 
     protected void performPostStopActions(Minigame minigame, int duration){}
+
+    public void cancel(){
+        if(taskId!=0) Bukkit.getScheduler().cancelTask(taskId);
+    }
 
     public void stop(){
         if(!started)return;
@@ -61,4 +75,7 @@ public abstract class Countdown {
         performPostStopActions(minigame, currentContdownTime);
     }
 
+    public int getCurrentContdownTime() {
+        return currentContdownTime;
+    }
 }
