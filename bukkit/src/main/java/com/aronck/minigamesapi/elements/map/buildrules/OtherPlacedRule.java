@@ -13,9 +13,8 @@ public class OtherPlacedRule extends BuildRule{
 
     @Override
     public boolean isAllowed(GameMap gameMap, TeamsConfiguration teamsConfiguration, Player player, Block block) {
-        if(gameMap ==null)return false;
-        if(gameMap.getPlacedBlocks().get(player)==null)return false;
-
+        if(gameMap == null)return false;
+        if(gameMap.getPlacedBlocks().get(player)==null || gameMap.getPlacedBy().get(block) == null)return false;
         return !player.equals(gameMap.getPlacedBy().get(block));
     }
 }

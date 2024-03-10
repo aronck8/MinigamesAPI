@@ -1,6 +1,7 @@
 package com.aronck.minigamesapi.elements.teams.kit;
 
 import com.aronck.minigamesapi.utils.PluginUtils;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -49,9 +50,9 @@ public class RandomizedInventory extends Kit{
             if(currentIndex>=availableSpace)return items;
             if(PluginUtils.getRandomInt(100)<probabilityOfItems.get(item))items[currentIndex++] = item;
         }
-        List<ItemStack> itemList = Arrays.asList(Arrays.copyOfRange(items, 0, currentIndex));
+        List<ItemStack> itemList = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(items, 0, currentIndex)));
         while (itemList.size()<availableSpace){
-            itemList.add(PluginUtils.getRandomInt(itemList.size()-1), null);
+            itemList.add(PluginUtils.getRandomInt(itemList.size()-1), new ItemStack(Material.AIR));
         }
 
         //reuse the old items array
