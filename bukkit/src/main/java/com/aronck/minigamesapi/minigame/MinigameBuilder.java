@@ -2,6 +2,7 @@ package com.aronck.minigamesapi.minigame;
 
 import com.aronck.minigamesapi.Main;
 import com.aronck.minigamesapi.elements.map.GameMap;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,6 +54,7 @@ public class MinigameBuilder{
     }
 
     public Minigame build() {
+        Main.getInstance().getFeedbackHandler().handleFeedback();
         minigame.preInitGameStates();
         return minigame;
     }

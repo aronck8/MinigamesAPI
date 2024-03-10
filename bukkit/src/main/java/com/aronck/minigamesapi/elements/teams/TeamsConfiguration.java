@@ -1,8 +1,11 @@
 package com.aronck.minigamesapi.elements.teams;
 
+import com.aronck.minigamesapi.Main;
+import com.aronck.minigamesapi.feedback.Feedback;
+import com.aronck.minigamesapi.feedback.FeedbackType;
+import com.aronck.minigamesapi.utils.FeedbackUtils;
 import com.aronck.minigamesapi.utils.PluginConstants;
 import com.aronck.minigamesapi.utils.PluginUtils;
-import org.apache.commons.lang.NullArgumentException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -44,7 +47,12 @@ public class TeamsConfiguration {
 	}
 
 	public TeamsConfiguration setTeamsData(TeamsData data, int... teamNumbers){
-		if(teamNumbers.length==0) throw new NullArgumentException("There was no team specified to which the data should be set to.");
+		if(teamNumbers.length==0) {
+			StackTraceElement stackTraceElement = FeedbackUtils.getFirstExternalStackTraceElement(new RuntimeException().getStackTrace());
+			Main.getInstance().getFeedbackHandler().getFeedbackFetcher()
+					.add(new Feedback(FeedbackType.SOFT_WARNING, "There was no team specified to which the data should be set to.", stackTraceElement.getClassName() + ":" + stackTraceElement.getLineNumber()));
+			return this;
+		}
 		for(int i : teamNumbers)
 			if(i == ALL_TEAMS){
 				teams.forEach(team -> team.data = data);

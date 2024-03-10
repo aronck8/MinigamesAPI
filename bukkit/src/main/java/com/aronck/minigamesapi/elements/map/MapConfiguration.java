@@ -1,10 +1,14 @@
 package com.aronck.minigamesapi.elements.map;
 
+import com.aronck.minigamesapi.Main;
 import com.aronck.minigamesapi.elements.map.buildrules.BuildActionType;
 import com.aronck.minigamesapi.elements.map.buildrules.BuildRule;
 import com.aronck.minigamesapi.elements.map.buildrules.BuildRuleType;
 import com.aronck.minigamesapi.elements.teams.TeamsConfiguration;
 import com.aronck.minigamesapi.elements.teams.kit.Kit;
+import com.aronck.minigamesapi.feedback.Feedback;
+import com.aronck.minigamesapi.feedback.FeedbackType;
+import com.aronck.minigamesapi.utils.FeedbackUtils;
 import com.aronck.minigamesapi.utils.PluginUtils;
 import com.aronck.minigamesapi.utils.Tuple;
 import org.bukkit.Location;
@@ -66,21 +70,45 @@ public class MapConfiguration {
     }
 
     public MapConfiguration addKitChest(Location location, ItemStack... content){
+        if(location==null){
+            StackTraceElement source = FeedbackUtils.getFirstExternalStackTraceElement(new RuntimeException().getStackTrace());
+            Main.getInstance().getFeedbackHandler().getFeedbackFetcher()
+                    .add(new Feedback(FeedbackType.SOFT_WARNING, "The location for the kit chest is null! The chest won't be registered", source.getClassName() + ":" + source.getLineNumber()));
+            return this;
+        }
         addKitChest(location, Arrays.asList(content), 100);
         return this;
     }
 
     public MapConfiguration addKitChest(Location location, List<ItemStack> content, int probability){
+        if(location==null){
+            StackTraceElement source = FeedbackUtils.getFirstExternalStackTraceElement(new RuntimeException().getStackTrace());
+            Main.getInstance().getFeedbackHandler().getFeedbackFetcher()
+                    .add(new Feedback(FeedbackType.SOFT_WARNING, "The location for the kit chest is null! The chest won't be registered", source.getClassName() + ":" + source.getLineNumber()));
+            return this;
+        }
         addKitChests(Collections.singletonList(location), content, probability);
         return this;
     }
 
     public MapConfiguration addKitChests(List<Location> locations, ItemStack... content){
+        if(locations.isEmpty()) {
+            StackTraceElement source = FeedbackUtils.getFirstExternalStackTraceElement(new RuntimeException().getStackTrace());
+            Main.getInstance().getFeedbackHandler().getFeedbackFetcher()
+                    .add(new Feedback(FeedbackType.SOFT_WARNING, "The location for the kit chest is null! The chest won't be registered", source.getClassName() + ":" + source.getLineNumber()));
+            return this;
+        }
         addKitChests(locations, Arrays.asList(content), 100);
         return this;
     }
 
     public MapConfiguration addKitChests(List<Location> locations, List<ItemStack> content, int probability){
+        if(locations.isEmpty()) {
+            StackTraceElement source = FeedbackUtils.getFirstExternalStackTraceElement(new RuntimeException().getStackTrace());
+            Main.getInstance().getFeedbackHandler().getFeedbackFetcher()
+                    .add(new Feedback(FeedbackType.SOFT_WARNING, "The location for the kit chest is null! The chest won't be registered", source.getClassName() + ":" + source.getLineNumber()));
+            return this;
+        }
         chestContents.computeIfAbsent(locations, k -> new ArrayList<>());
         chestContents.get(locations).add(new Tuple<>(probability, content));
         return this;
@@ -90,14 +118,14 @@ public class MapConfiguration {
         for (List<Location> locations : chestContents.keySet()) {
             if (locations.contains(location)) return chestContents.get(locations);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     private List<Tuple<Integer, List<ItemStack>>> getListOfKitsAndProbabilities(List<Location> locations){
         for (List<Location> locations1 : chestContents.keySet()) {
             if (locations1.containsAll(locations)) return chestContents.get(locations1);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     private void fillChest(Location location){
