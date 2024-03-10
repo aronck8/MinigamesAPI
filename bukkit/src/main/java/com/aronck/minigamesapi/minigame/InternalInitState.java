@@ -4,14 +4,28 @@ import com.aronck.minigamesapi.commands.internalCommands.LocationChooserCommand;
 import com.aronck.minigamesapi.commands.internalCommands.MinigameSetupCommand;
 import com.aronck.minigamesapi.events.internalEvents.*;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
-import tests.Main;
+import com.aronck.minigamesapi.Main;
 
 final class InternalInitState extends AbstractState{
 
+    private InteractListener interactListener;
+    private InventoryClickListener inventoryClickListener;
+    private DeathListener deathListener;
+    private RespawnListener respawnListener;
+    private BlockBreakListener blockBreakListener;
+    private BlockPlaceListener blockPlaceListener;
+
     InternalInitState(Minigame minigame) {
         super(minigame, "init", GamePhase.PREGAME, true);
+        interactListener = new InteractListener(minigame);
+        inventoryClickListener = new InventoryClickListener(minigame);
+        deathListener = new DeathListener(minigame);
+        respawnListener = new RespawnListener(minigame);
+        blockBreakListener = new BlockBreakListener(minigame);
+        blockPlaceListener = new BlockPlaceListener(minigame);
     }
 
     @Override
@@ -26,11 +40,11 @@ final class InternalInitState extends AbstractState{
         if(!plugin.isEnabled()){
             Bukkit.getPluginManager().enablePlugin(plugin);
         }
-        registerListeners();
     }
 
     @Override
     protected void onStart() {
+        registerListeners();
         //directly continue to the next state which is the first user defined state
         stop();
     }
@@ -41,15 +55,24 @@ final class InternalInitState extends AbstractState{
     }
 
     @Override
-    protected void cleanUp(){}
+    protected void cleanUp(){
+        HandlerList.unregisterAll(interactListener);
+        HandlerList.unregisterAll(inventoryClickListener);
+        HandlerList.unregisterAll(deathListener);
+        HandlerList.unregisterAll(respawnListener);
+        HandlerList.unregisterAll(blockBreakListener);
+        HandlerList.unregisterAll(blockPlaceListener);
+
+        minigame.eventsManager.unregisterEvents();
+    }
 
     private void registerListeners(){
-        Bukkit.getPluginManager().registerEvents(new InteractEvent(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new InventoryClick(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new DeathListener(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new RespawnEvent(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(minigame), main);
-        Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(minigame), main);
+        Bukkit.getPluginManager().registerEvents(interactListener, main);
+        Bukkit.getPluginManager().registerEvents(inventoryClickListener, main);
+        Bukkit.getPluginManager().registerEvents(deathListener, main);
+        Bukkit.getPluginManager().registerEvents(respawnListener, main);
+        Bukkit.getPluginManager().registerEvents(blockBreakListener, main);
+        Bukkit.getPluginManager().registerEvents(blockPlaceListener, main);
         minigame.eventsManager.registerListeners();
 
         Bukkit.getPluginManager().registerEvents(minigame.eventsManager, main);

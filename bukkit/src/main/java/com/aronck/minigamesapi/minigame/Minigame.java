@@ -153,6 +153,7 @@ public class Minigame {
 
 	public void startNextState(){
 
+		if(currentState==null)return;
 		nextState = currentState.nextState;
 		if (nextState == null) {
 			//if the last state is reached, stop the minigame
@@ -162,7 +163,7 @@ public class Minigame {
 
 
 		//if a state is currently running, stop it before starting further states
-		if(currentState!=null && currentState.isRunning()) {
+		if(currentState.isRunning()) {
 			currentState.stop();
 		}
 
@@ -173,15 +174,50 @@ public class Minigame {
 	public void stopMinigame(){
 		//check if the currentstate is the cleanupstate so it isn't being stopped
 		if(currentState==cleanUpState)return;
-		currentState.setNextState(cleanUpState);
-		currentState.startNextStateOnFinish=true;
+		//bypass all the other states that normally would follow the current state and jump directly in the postgame states
+		currentState.startNextStateOnFinish=false;
 		currentState.stop();
+		performCleanup();
+		startPostGameStates();
+	}
+
+	private void startPostGameStates(){
+		AbstractState state = currentState;
+
+		//check if postGameStates already ran or are already being run.
+		if(currentState==null || currentState.gamePhase.equals(GamePhase.POSTGAME)){
+			return;
+		}
+
+		while(state != null){
+			//search and start the first postgame states
+			if(state.gamePhase.equals(GamePhase.POSTGAME)){
+				state.start();
+				currentState=state;
+				nextState=currentState.nextState;
+				return;
+			}
+			state = state.nextState;
+		}
+
+		//if no custom postgame state found, go directly to the internal cleanup state
+		currentState = cleanUpState;
+		nextState = cleanUpState.nextState;
+		cleanUpState.start();
 	}
 
 	void preInitGameStates(){
 		AbstractState state = firstState;
 		while(state!=null){
 			state.preInit();
+			state = state.nextState;
+		}
+	}
+
+	void performCleanup(){
+		AbstractState state = firstState;
+		while(state!=null){
+			state.cleanUp();
 			state = state.nextState;
 		}
 	}

@@ -34,6 +34,10 @@ public class EventsManager implements Listener {
         //Bukkit.getPluginManager().registerEvents(new LegacyEventCaller(this), main);
     }
 
+    public void unregisterEvents(){
+
+    }
+
     public void setDebug(boolean debug) {
         this.debug = debug;
     }
