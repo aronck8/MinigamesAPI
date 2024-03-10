@@ -5,6 +5,7 @@ import com.aronck.minigamesapi.elements.locations.ChooserType;
 import com.aronck.minigamesapi.elements.locations.LocationChooser;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +39,75 @@ public final class PluginUtils {
 
 		player.openInventory(inv);
 
+	}
+
+	public static double getLocationsDistance(Location loc1, Location loc2){
+		int distanceX = loc1.getBlockX()-loc2.getBlockX();
+		int distanceY = loc1.getBlockY()-loc2.getBlockY();
+		int distanceZ = loc1.getBlockZ()-loc2.getBlockZ();
+
+		return Math.sqrt(Math.sqrt(((distanceX*distanceX)+(distanceY*distanceY))+(distanceZ*distanceZ)));
+	}
+
+	public static <T> int getFirstEmptyArrayIndex(T[] array){
+		for (int i = 0;i<array.length;i++){
+			if(array[i]==null)return i;
+		}
+		return -1;
+	}
+
+	public static <T> int getClosestFreeSlotInList(List<T> list, int wantedIndex){
+		int nearestDistance = list.size();
+		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i)==null&&(Math.abs(nearestDistance)>=Math.abs(i-wantedIndex))){
+				nearestDistance=i-wantedIndex;
+			}
+		}
+		return wantedIndex + nearestDistance;
+	}
+
+	public static <T> int getClosestFreeSlotInArray(T[] array, int wantedIndex){
+		int nearestDistance = array.length;
+		for (int i = 0; i < array.length; i++) {
+			if(array[i]==null&&(Math.abs(nearestDistance)>=Math.abs(i-wantedIndex))){
+				nearestDistance=i-wantedIndex;
+			}
+		}
+		return wantedIndex + nearestDistance;
+	}
+
+	public static <T> ArrayList<T> createFreeSpaceInArrayList(ArrayList<T> list, int index){
+		int nextAvailableIndex = getClosestFreeSlotInList(list, index);
+
+		list.remove(nextAvailableIndex);
+		list.add(index, null);
+		return list;
+	}
+
+	public static <T> T[] shiftArrayElements(T[] array, int beginIndex, int goalIndex){
+
+		int shiftDifference = goalIndex-beginIndex;
+		if(shiftDifference>0){
+			//shift to the right
+			for (int i = goalIndex;i>=beginIndex;i--){
+				array[i] = array[i-shiftDifference];
+			}
+		}else{
+			//shift to the left
+			for(int i = goalIndex;i<=beginIndex;i++){
+				array[i] = array[i+shiftDifference];
+			}
+		}
+
+		array[beginIndex] = null;
+		return array;
+	}
+
+	public static <T> boolean containsElementInArray(T[] array, T searchedElement){
+		for (T t : array) {
+			if (t.equals(searchedElement)) return true;
+		}
+		return false;
 	}
 
 	public static int convertToMultiplesOfBase(int number, int base) {
